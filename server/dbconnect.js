@@ -4,10 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 // Creating new Object of Sequelize 
 export const sequelize = new Sequelize( 
-     process.env.DATABASE_NAME, 
-    //'mms_db',
-    //'yash',
-    //'Qwerty@12', {
+     process.env.DATABASE_NAME,
      process.env.DATABASE_USERNAME, 
      process.env.DATABASE_PASSWORD, { 
   
