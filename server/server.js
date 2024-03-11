@@ -1,13 +1,11 @@
 import express from "express";
 import { sequelize } from "./dbconnect.js";
-import { User } from "./Models/User.model.js";
+//import userRouter from "./Routes/user.routes.js";
 const app = express()
 const port = 8000
 
 app.listen(port,()=>
-console.log("ye serbhar chal raha hai"))
-
-
+console.log("server running!!cd "))
 
 sequelize
     .authenticate()
@@ -15,14 +13,5 @@ sequelize
     .catch((error) => console.log('Failed to connect the database:', error))
 
 
-    sequelize.sync()
-    .then(async () => {
-        // Insert new row using `create()` method
-        await User.create({
-            firstName: 'Modi',
-            lastName: 'Singh'
-        })
-        console.log('Successfully added a new student!')
-    })
-    .catch((error) => console.log('Failed to synchronize with the database:', error))
+    
 
