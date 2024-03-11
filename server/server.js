@@ -5,7 +5,7 @@ const app = express()
 const port = 8000
 
 app.listen(port,()=>
-console.log("server running!!cd "))
+console.log("server running!!"))
 
 sequelize
     .authenticate()
