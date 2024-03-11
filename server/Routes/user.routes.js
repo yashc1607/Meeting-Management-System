@@ -5,4 +5,4 @@ const userRouter = express.Router();
 //public path
 userRouter.use('/',userCreated);
 
-export default userRouter;
+export default userRouter; 
