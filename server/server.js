@@ -1,12 +1,9 @@
 import express from "express";
 import { sequelize } from "./dbconnect.js";
 
+import userRouter from "./Routes/user.routes.js";
 const app = express()
 const port = 8000
-app.use(express.json());
-
-
-
 app.use(express.json());
 
 //router
