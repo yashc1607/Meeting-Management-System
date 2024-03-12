@@ -1,6 +1,11 @@
 import { sequelize } from "../dbconnect.js"
 import { DataTypes } from "sequelize"
 export const User = sequelize.define('user', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        allowNull: false
+    },
     emailID: {
         type: DataTypes.STRING,
         primaryKey: true
