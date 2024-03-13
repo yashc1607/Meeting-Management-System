@@ -4,10 +4,11 @@ export const Group = sequelize.define('group', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
+        primaryKey:true
     },
     group_name: {
         type: DataTypes.STRING,
-        primaryKey: true
+        unique: true
     }
 })

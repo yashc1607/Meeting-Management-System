@@ -4,10 +4,13 @@ export const Role = sequelize.define('role', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
+        primaryKey:true
     },
     role_name: {
         type: DataTypes.STRING,
-        primaryKey: true
+        unique: true
     }
+    
+    
 })
