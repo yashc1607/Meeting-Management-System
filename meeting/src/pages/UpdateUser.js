@@ -45,43 +45,30 @@ export default function UpdateUser() {
             setLoading(false);
         }
     };
-
+    //console.log(formData);
     return (
         <div>
             <AdminAction />
-
-
-
-
             <div class="container col-lg-6 col-sm-8 card text-center mt-3 p-5">
                 <div class="card-header">
                     <h1 className="text-3xl font-semibold text-center">Delete User</h1>
                 </div>
                 <div class="card-body ">
-                    {/* <form onSubmit={handleSubmit} className="row g- d-flex align-items-center m-5 w-50 ">
-                        <p class="card-text"> <div className="col-md-4 ">
-                            <input type="text" id="emailId" name="emailId" onChange={handleChange} placeholder="Email ID" class="form-control" value={formData.emailId} />
-                        </div></p>
-
-                        <div className="btn btn-danger ">
-                            <button disabled={loading || uploading} type="submit" className="btn btn-danger ml-2">
-                                {loading ? 'Deleting...' : 'Delete User'}
-                            </button>
-                        </div>
-                    </form> */}
+                    <form onSubmit={handleSubmit}>
                     <div class="input-group">
-                        <input type="text" class="form-control" aria-label="..."/>
-                            <div class="btn btn-danger input-group-btn">
-                                Delete
-                                {/* <!-- Button and dropdown menu --> */}
-                            </div>
+                        <input type="text" class="form-control" id="emailId" name="emailId" onChange={handleChange} aria-label="..." value={formData.emailId}/>
+                            <button type="submit" class="btn btn-danger input-group-btn">
+                            {loading ? 'Deleting...' : 'Delete User'}
+                            </button>
                     </div>
+                    <div>
+                        {error && <p className="text-danger">{error}</p>}
+                    </div>
+                    </form>                    
                 </div>
             </div>
 
-            <div>
-                {error && <p className="text-danger">{error}</p>}
-            </div>
+           
 
 
         </div>

@@ -128,6 +128,7 @@ export const getRoles = async (req, res, next) => {
                 // Insert new row using `create()` method
                 const roles = await Role.findAll();
                 console.log('Successfully added a new Role!');
+                console.log(roles );
                 res.status(200).send({
                     "message":"success",
                     "roles":roles
