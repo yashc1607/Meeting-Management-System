@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import UpdateUser from '../pages/UpdateUser';
+import AddKeyword from '../pages/addKeyword';
 
 export default function AdminAction() {
   return (
@@ -18,7 +19,7 @@ export default function AdminAction() {
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Keyword</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/UpdateUser">Add Keyword</a></li>
+            <li><a class="dropdown-item" href="/AddKeyword">Add Keyword</a></li>
             <li><a class="dropdown-item" href="/UpdateUser">Delete Keyword</a></li>
             {/* <li><hr class="dropdown-divider"/></li> */}
           </ul>
