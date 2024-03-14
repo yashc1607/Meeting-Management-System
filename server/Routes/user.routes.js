@@ -1,5 +1,6 @@
 import express from 'express';
 import { addDepartment, addGroup, addRole, addUser, assignGroup, assignKeyword, assignRole, getAssignedGroups, getAssignedKeywords, getAssignedRoles, getDepartments, getGroups, getRoles, getUser, removeAssignedGroup, removeAssignedKeyword, removeAssignedRole, removeDepartment, removeGroup, removeRole, removeUser, updateAssignedRole, updateDepartment, updateGroup, updateRole } from '../Controller/userController.js';
+import { addMeeting, addMeetingKeywords, addParticipants } from '../Controller/meetingController.js';
 const userRouter = express.Router();
 
 //public path
@@ -35,5 +36,11 @@ userRouter.post('/removeassignedgroups',removeAssignedGroup);
 userRouter.post('/assignkeyword',assignKeyword);
 userRouter.post('/getassignedkeywords',getAssignedKeywords);
 userRouter.post('/removeAssignedKeyword',removeAssignedKeyword);
+
+userRouter.post('/addmeeting',addMeeting);
+userRouter.post('/addparticipants',addParticipants);
+userRouter.post('/addmeetingkeyword',addMeetingKeywords);
+
+
 
 export default userRouter; 

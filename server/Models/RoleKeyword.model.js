@@ -15,7 +15,15 @@ export const RoleKeyword = sequelize.define('roleKeyword', {
         type: DataTypes.STRING,
         allowNull: false,
     }
-});
+},
+{
+    uniqueKeys: {
+      Items_unique: {
+        fields: ['roleID', 'keyword']
+      }
+    }
+  }
+);
 
 // Define the association between User and UserRole
 Role.hasMany(RoleKeyword, { foreignKey: 'roleID' });
