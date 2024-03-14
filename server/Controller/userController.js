@@ -808,9 +808,9 @@ export const getAssignedKeywords = async (req, res, next) => {
                 const keywords = await RoleKeyword.findAll({
                     where:{roleID: data.role_id}
                 });
-                console.log('Successfully added a new role-keywrod!');
+                console.log('Successfully fetched new role-keywrod!');
                 res.status(200).send({
-                    "message":"Successfully added a new role-keyword!",
+                    "message":"Successfully fetched new role-keywrod!",
                     "keywords":keywords
                 });
             })

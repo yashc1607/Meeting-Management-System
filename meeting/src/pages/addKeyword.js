@@ -12,7 +12,7 @@ export default function AddKeyword() {
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(false);
     const [tableData, setTableData] = useState([]);
-    
+    const [msg, setmsg] = useState('');
     // State to store the selected option
     const [selectedOption, setSelectedOption] = useState('');
     useEffect(() => {
@@ -20,47 +20,49 @@ export default function AddKeyword() {
     }, []);
     const fetchData = async () => {
         const url = `http://localhost:8000/getroles`;
-        console.log(url);
         const response = await fetch(url);
         const data = await response.json();
         setTableData(data.roles);
     };
-    console.log("kokok");
-    console.log(tableData);
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.id]: e.target.value,
         });
     };
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         console.log(formData);
-    //         setLoading(true);
-    //         setError(false);
-    //         const res = await fetch('/server/assignKeyword', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({
-    //                 ...formData,
-    //                 roleroleID: selectedOption,
-    //             }),
-    //         });
-    //         const data = await res.json();
-    //         setLoading(false);
-    //         if (data.success === false) {
-    //             setError(data.message);
-    //         }
-    //         window.location.reload(false);
-    //     } catch (error) {
-    //         setError(error.message);
-    //         setLoading(false);
-    //     }
-    // };
-    // console.log(formData);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            console.log(formData);
+            setLoading(true);
+            setError(false);
+            const url = `http://localhost:8000/assignKeyword`;
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    role_id: selectedOption,
+                }),
+            });
+            const data = await res.json();
+            setLoading(false);
+            if (data.success === false) {
+                setError(data.message);
+            }
+            else {
+                setmsg(`keyword ${formData.keyword} Added!`);
+            }
+            window.location.reload(false);
+        } catch (error) {
+            setError(error.message);
+            setLoading(false);
+        }
+    };
+    //console.log(tableData);
+    //console.log(formData);
     return (
         <div>
             <AdminAction />
@@ -69,34 +71,33 @@ export default function AddKeyword() {
                     <h1 className="text-3xl font-semibold text-center">Add New Keyword</h1>
                 </div>
                 <div class="card-body ">
-                    <form>
-                    {/* <form onSubmit={handleSubmit}> */}
-                    <div>
-                                <select id="dropdown" onChange={(e) => setSelectedOption(e.target.value)} value={selectedOption}>
-                                    <option value="">Select Role</option>
-                                    {tableData.map((item) => (
-                                        <option key={item.id} value={item.id}>{item.role_name}</option>
-                                    ))}
-                                </select>
-                                {/* {<p>{selectedOption}</p>} */}
-                            </div>
+
+                    <form onSubmit={handleSubmit}>
+                        <div>
+                            <select id="dropdown" onChange={(e) => setSelectedOption(e.target.value)} value={selectedOption} required>
+                                <option value="">Select Role</option>
+                                {tableData.map((item) => (
+                                    <option key={item.id} value={item.id}>{item.role_name}</option>
+                                ))}
+                            </select>
+
+                        </div>
                         <div class="input-group">
-                            
-                            <input type="text" class="form-control" id="keyword" name="keyword" onChange={handleChange} aria-label="..." value={formData.keyword} />
-                            <button type="submit" class="btn btn-danger input-group-btn">
+
+                            <input type="text" class="form-control" id="keyword" name="keyword" onChange={handleChange} aria-label="..." value={formData.keyword} required />
+                            <button type="submit" class="btn btn-success input-group-btn">
                                 {loading ? 'Adding...' : 'Add Keyword'}
                             </button>
                         </div>
                         <div>
+
                             {error && <p className="text-danger">{error}</p>}
                         </div>
                     </form>
+
                 </div>
+                {<p>{msg}</p>}
             </div>
-
-
-
-
         </div>
     )
 }
