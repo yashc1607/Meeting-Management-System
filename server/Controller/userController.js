@@ -6,7 +6,7 @@ import { Group } from "../Models/Group.model.js";
 import { UserRole } from "../Models/UserRole.model.js";
 import { UserGroup } from "../Models/UserGroup.model.js";
 import { RoleKeyword } from "../Models/RoleKeyword.model.js";
-import { Sequelize } from "sequelize";
+
 
 //get user by email id
 export const getUser = async (req, res, next) => {
@@ -90,7 +90,7 @@ export const removeUser = async (req, res, next) => {
         sequelize.sync()
             .then(async () => {
                 // Insert new row using `create()` method
-                await User.destroy({
+                await User.update({active:false},{
                     where:{
                         emailID:data.email_id
                     }
@@ -162,12 +162,11 @@ export const addRole = async (req, res, next) => {
             .then(async () => {
                 // Insert new row using `create()` method
                 await Role.create({
-                    role_name: data.role
+                    role_name: data.role,
                 })
                 console.log('Successfully added a new Role!');
                 res.status(200).send({
                     "message":"Successfully added a new Role!",
-                    
                 });
             })
             .catch((error) => {
@@ -197,7 +196,8 @@ export const updateRole = async (req, res, next) => {
                 // Insert new row using `create()` method
                 await Role.update({role_name:data.role},{
                     where:{
-                    role_id:data.role_id
+                        role_id:data.role_id,
+                        active:true
                     }
                 })
                 console.log('Successfully updated a  Role!');
@@ -896,3 +896,5 @@ export const removeAssignedKeyword = async (req, res, next) => {
         next(error);
     }
 }
+
+
