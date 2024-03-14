@@ -1,8 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
-import {BrowserRouter,Routes,Route} from 'react-router-dom';
+import HomePage from './pages/Home';
+import Account from './pages/Account';
+import Protected from "./components/Protected";
+import { AuthContextProvider } from "./context/AuthContext";
+import {BrowserRouter as Router,Routes,Route} from 'react-router-dom';
 import Header from './components/header';
-import Signin from './pages/Signin';
 import Admin from './pages/admin';
 import AddKeyword from './pages/addKeyword';
 import DeleteUser from './pages/DeleteUser';
@@ -10,23 +11,24 @@ import DeleteKeyword from './pages/deleteKeyword';
 import PrivateRoute from './components/PrivateRoute';
 import AssignGroup from './pages/assignGroup';
 import AddGroup from './pages/addGroup';
+
 export default function App() {
   return (
-    <BrowserRouter >
-      <Header></Header>
-      <Routes>
-        
-        <Route path="/" element={<Signin />} />
-        <Route path="/Admin" element={<Admin/>} />
-        <Route path="/AddKeyword" element={<AddKeyword/>} />
-        <Route path="/DeleteUser" element={<DeleteUser/>} />
-        <Route path="/DeleteKeyword" element={<DeleteKeyword/>} />
-        <Route path="/AddGroup" element={<AddGroup/>} />
-        <Route path="/AssignGroup" element={<AssignGroup/>} />
-        <Route element={<PrivateRoute/>}>
-          
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Router >
+      <AuthContextProvider>
+        <Header></Header>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/Admin" element={<Admin/>} />
+          <Route path="/AddKeyword" element={<AddKeyword/>} />
+          <Route path="/DeleteUser" element={<DeleteUser/>} />
+          <Route path="/DeleteKeyword" element={<DeleteKeyword/>} />
+          <Route path="/AddGroup" element={<AddGroup/>} />
+          <Route path="/AssignGroup" element={<AssignGroup/>} />
+          <Route path="/account" element={<Protected ><Account /></Protected>}/>
+          <Route element={<PrivateRoute/>}></Route>
+        </Routes>
+       </AuthContextProvider>
+    </Router>
   )
 }
