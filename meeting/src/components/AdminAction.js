@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import DeleteUser from '../pages/DeleteUser';
 import AddKeyword from '../pages/addKeyword';
 import DeleteKeyword from '../pages/deleteKeyword';
+import AddGroup from '../pages/addGroup';
+import AssignGroup from '../pages/assignGroup';
 export default function AdminAction() {
   return (
     <ul className="nav nav-pills navbar navbar-expand-sm p-2 bg-light">
@@ -21,6 +23,14 @@ export default function AdminAction() {
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/AddKeyword">Add Keyword</a></li>
             <li><a class="dropdown-item" href="/DeleteKeyword">Delete Keyword</a></li>
+            {/* <li><hr class="dropdown-divider"/></li> */}
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Group</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/AddGroup">Add Group</a></li>
+            <li><a class="dropdown-item" href="/AssignGroup">Assign Group</a></li>
             {/* <li><hr class="dropdown-divider"/></li> */}
           </ul>
         </li>
