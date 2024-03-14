@@ -19,16 +19,66 @@ export const getUser = async (req, res, next) => {
             .then(async () => {
                 // Insert new row using `create()` method
                 const user = await User.findOne({where:{
-                    
-                    emailID:data.email_id
-                    
+                    emailID:data.email_id,
+                    active:1
                     }
                 });
-                console.log('Successfully added a new user!');
+                console.log('Successfully fetched user!');
+                console.log(user);
+                if(user){
+                    res.status(200).send({
+                        "message":"success!",
+                        "user":user,
+                        "ok":true
+                    });
+                }else{
+                    res.status(200).send({
+                        "message":"Failed to add new user : ",
+                        "ok":false
+                    });
+                }
+                
+            })
+            .catch((error) => {
+                console.log('Failed to synchronize with the database:', error);
                 res.status(200).send({
-                    "message":"success!",
-                    "user":user 
+                    "message":"Failed to add new user : "+error,
                 });
+            })
+
+        //
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+//Get All User
+export const getAllUser = async (req, res, next) => {
+    try {
+        console.log("arrived");
+
+        const data = req.body;    
+        console.log(data);
+        sequelize.sync()
+            .then(async () => {
+                // Insert new row using `create()` method
+                const user = await User.findAll();
+                console.log('Successfully fetched user!');
+                console.log(user);
+                if(user){
+                    res.status(200).send({
+                        "message":"success!",
+                        "user":user,
+                        "ok":true
+                    });
+                }else{
+                    res.status(200).send({
+                        "message":"Failed to add new user : ",
+                        "ok":false
+                    });
+                }
+                
             })
             .catch((error) => {
                 console.log('Failed to synchronize with the database:', error);
@@ -404,8 +454,7 @@ export const getGroups = async (req, res, next) => {
         sequelize.sync()
             .then(async () => {
                 // Insert new row using `create()` method
-                const groupsId = await Group.findAll();
-            
+                const groups = await Group.findAll();
                 console.log('Successfully found Groups!');
                 res.status(200).send({
                     "message":"success",
@@ -425,7 +474,6 @@ export const getGroups = async (req, res, next) => {
         next(error);
     }
 }
-
 
 //addGroup
 export const addGroup = async (req, res, next) => {
@@ -465,8 +513,6 @@ export const addGroup = async (req, res, next) => {
 export const updateGroup = async (req, res, next) => {
     try {
         console.log("arrived");
-        // console.log(req);
-        //
         const data = req.body;
         console.log(data);
         sequelize.sync()
@@ -524,6 +570,109 @@ export const removeGroup = async (req, res, next) => {
                 console.log('Failed to synchronize with the database:', error);
                 res.status(200).send({
                     "message":"Failed to remove group : "+error,
+                });
+            })
+
+        
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+//assignGroupToUser
+export const assignGroup = async (req, res, next) => {
+    try {
+        console.log("arrived");
+        // console.log(req);
+        //
+        const data = req.body;
+        console.log(data);
+        sequelize.sync()
+            .then(async () => {
+                // Insert new row using `create()` method
+                await UserGroup.create({
+                    userID: data.user_id,
+                    groupID:data.group_id
+                })
+                console.log('Successfully added a new User-Group!');
+                res.status(200).send({
+                    "message":"Successfully added a new User-Group!",
+                });
+            })
+            .catch((error) => {
+                console.log('Failed to synchronize with the database:', error);
+                res.status(200).send({
+                    "message":"Failed to add user-group : "+error,
+                });
+            })
+
+        
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+//remove assigned group
+export const removeAssignedGroup = async (req, res, next) => {
+    try {
+        console.log("arrived");
+        // console.log(req);
+        //
+        const data = req.body;
+        console.log(data);
+        sequelize.sync()
+            .then(async () => {
+                // Insert new row using `create()` method
+                await UserGroup.destroy({
+                    where:{
+                        id:data.usergroup_id
+                    }
+                })
+                console.log('Successfully removed User-Group!');
+                res.status(200).send({
+                    "message":"Successfully remvoed User-Group!",
+                });
+            })
+            .catch((error) => {
+                console.log('Failed to synchronize with the database:', error);
+                res.status(200).send({
+                    "message":"Failed to remove user-group : "+error,
+                });
+            })
+
+        
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+//get keywords
+export const getAssignedKeywords = async (req, res, next) => {
+    try {
+        console.log("arrived");
+        // console.log(req);
+        //
+        const data = req.body;
+        console.log(data);
+        sequelize.sync()
+            .then(async () => {
+                // Insert new row using `create()` method
+                const keywords = await RoleKeyword.findAll({
+                    where:{roleID: data.role_id}
+                });
+                console.log('Successfully fetched new role-keywrod!');
+                res.status(200).send({
+                    "message":"Successfully fetched new role-keywrod!",
+                    "keywords":keywords
+                });
+            })
+            .catch((error) => {
+                console.log('Failed to synchronize with the database:', error);
+                res.status(200).send({
+                    "message":"Failed to add role-keyword : "+error,
                 });
             })
 
@@ -723,110 +872,6 @@ export const getAssignedGroups = async (req, res, next) => {
     }
 }
 
-
-
-//assignGroupToUser
-export const assignGroup = async (req, res, next) => {
-    try {
-        console.log("arrived");
-        // console.log(req);
-        //
-        const data = req.body;
-        console.log(data);
-        sequelize.sync()
-            .then(async () => {
-                // Insert new row using `create()` method
-                await UserGroup.create({
-                    userID: data.user_id,
-                    groupID:data.group_id
-                })
-                console.log('Successfully added a new User-Group!');
-                res.status(200).send({
-                    "message":"Successfully added a new User-Group!",
-                });
-            })
-            .catch((error) => {
-                console.log('Failed to synchronize with the database:', error);
-                res.status(200).send({
-                    "message":"Failed to add user-group : "+error,
-                });
-            })
-
-        
-
-    } catch (error) {
-        next(error);
-    }
-}
-
-//remove assigned group
-export const removeAssignedGroup = async (req, res, next) => {
-    try {
-        console.log("arrived");
-        // console.log(req);
-        //
-        const data = req.body;
-        console.log(data);
-        sequelize.sync()
-            .then(async () => {
-                // Insert new row using `create()` method
-                await UserGroup.destroy({
-                    where:{
-                        id:data.usergroup_id
-                    }
-                })
-                console.log('Successfully removed User-Group!');
-                res.status(200).send({
-                    "message":"Successfully remvoed User-Group!",
-                });
-            })
-            .catch((error) => {
-                console.log('Failed to synchronize with the database:', error);
-                res.status(200).send({
-                    "message":"Failed to remove user-group : "+error,
-                });
-            })
-
-        
-
-    } catch (error) {
-        next(error);
-    }
-}
-
-//get keywords
-export const getAssignedKeywords = async (req, res, next) => {
-    try {
-        console.log("arrived");
-        // console.log(req);
-        //
-        const data = req.body;
-        console.log(data);
-        sequelize.sync()
-            .then(async () => {
-                // Insert new row using `create()` method
-                const keywords = await RoleKeyword.findAll({
-                    where:{roleID: data.role_id}
-                });
-                console.log('Successfully fetched new role-keywrod!');
-                res.status(200).send({
-                    "message":"Successfully fetched new role-keywrod!",
-                    "keywords":keywords
-                });
-            })
-            .catch((error) => {
-                console.log('Failed to synchronize with the database:', error);
-                res.status(200).send({
-                    "message":"Failed to add role-keyword : "+error,
-                });
-            })
-
-        
-
-    } catch (error) {
-        next(error);
-    }
-}
 
 //assign keywords to roles
 export const assignKeyword = async (req, res, next) => {

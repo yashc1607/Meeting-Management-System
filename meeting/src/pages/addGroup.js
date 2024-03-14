@@ -3,15 +3,23 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
 
-export default function DeleteUser() {
+export default function AddGroup() {
     const [formData, setFormData] = useState({
-        email_id: '',
+        group_name: '',
     });
     const { currentUser } = useSelector((state) => state.user);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(false);
+    const [tableData, setTableData] = useState([]);
+    const [msg, setmsg] = useState('');
+    // State to store the selected option
+    const [selectedOption, setSelectedOption] = useState('');
+    
     const handleChange = (e) => {
+        
+        setError(false);
+        console.log(error);
         setFormData({
             ...formData,
             [e.target.id]: e.target.value,
@@ -20,81 +28,63 @@ export default function DeleteUser() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            console.log(formData);
             setLoading(true);
             setError(false);
-            const url = `http://localhost:8000/getUser`;
+            const url = `http://localhost:8000/addGroup`;
             const res = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email_id: formData.email_id
+                    group_name:formData.group_name
                 }),
             });
-            console.log(res);
-            const data1 = await res.json();
-            if(data1.ok) {
-                try {
-                    const url = `http://localhost:8000/removeUser`;
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            email_id: formData.email_id
-                        }),
-                    });
-                    console.log(res);
-                    const data = await res.json();
-                    setLoading(false);
-                    console.log(data);
-                    if (data.success === false) {
-                        setError(data.message);
-                    }
-                    else{
-                        setError('User Removed');
-                    } 
-                } catch (error) {
-                    setError(error.message);
-                    setLoading(false);
-                }
-            }else {
-                setError('user not found');
-                setLoading(false);
-            }  
+            const data = await res.json();
+            setLoading(false);
+            if (data.success === false) {
+                setError(data.message);
+            }
+            else {
+                setmsg(`Group ${formData.group_name} Added!`);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            }
+            //window.location.reload(false);
         } catch (error) {
             setError(error.message);
             setLoading(false);
         }
     };
+    //console.log(tableData);
     console.log(formData);
     return (
         <div>
             <AdminAction />
             <div class="container col-lg-6 col-sm-8 card text-center mt-3 p-5">
                 <div class="card-header">
-                    <h1 className="text-3xl font-semibold text-center">Delete User</h1>
+                    <h1 className="text-3xl font-semibold text-center">Add New Group</h1>
                 </div>
                 <div class="card-body ">
+
                     <form onSubmit={handleSubmit}>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="email_id" name="email_id" onChange={handleChange} aria-label="..." value={formData.email_id} required/>
-                            <button type="submit" class="btn btn-danger input-group-btn">
-                                {loading ? 'Deleting...' : 'Delete User'}
+
+                            <input type="text" class="form-control" id="group_name" name="group_name" onChange={handleChange} aria-label="..." value={formData.group_name} required />
+                            <button type="submit" class="btn btn-success input-group-btn">
+                                {loading ? 'Adding...' : 'Add Group'}
                             </button>
                         </div>
                         <div>
+
                             {error && <p className="text-danger">{error}</p>}
                         </div>
                     </form>
                 </div>
+                {<p>{msg}</p>}
             </div>
-
-
-
-
         </div>
     )
 }
