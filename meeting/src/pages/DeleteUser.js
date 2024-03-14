@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
 
-export default function UpdateUser() {
+export default function DeleteUser() {
     const [formData, setFormData] = useState({
         emailId: '',
     });
@@ -23,15 +23,14 @@ export default function UpdateUser() {
             console.log(formData);
             setLoading(true);
             setError(false);
-            const res = await fetch('/api/proposal/uploadProposal', {
+            const url = `http://localhost:8000/getUser`;
+            const res = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     ...formData,
-                    email: currentUser.email,
-                    name: currentUser.name,
                 }),
             });
             const data = await res.json();
@@ -39,7 +38,6 @@ export default function UpdateUser() {
             if (data.success === false) {
                 setError(data.message);
             }
-            window.location.reload(false);
         } catch (error) {
             setError(error.message);
             setLoading(false);
@@ -56,7 +54,7 @@ export default function UpdateUser() {
                 <div class="card-body ">
                     <form onSubmit={handleSubmit}>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="emailId" name="emailId" onChange={handleChange} aria-label="..." value={formData.emailId}/>
+                        <input type="text" class="form-control" id="emailId" name="emailId" onChange={handleChange} aria-label="..." value={formData.email_id}/>
                             <button type="submit" class="btn btn-danger input-group-btn">
                             {loading ? 'Deleting...' : 'Delete User'}
                             </button>

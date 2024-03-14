@@ -5,7 +5,8 @@ import Header from './components/header';
 import Signin from './pages/Signin';
 import Admin from './pages/admin';
 import AddKeyword from './pages/addKeyword';
-import UpdateUser from './pages/UpdateUser';
+import DeleteUser from './pages/DeleteUser';
+import DeleteKeyword from './pages/deleteKeyword';
 import PrivateRoute from './components/PrivateRoute';
 export default function App() {
   return (
@@ -16,7 +17,8 @@ export default function App() {
         <Route path="/" element={<Signin />} />
         <Route path="/Admin" element={<Admin/>} />
         <Route path="/AddKeyword" element={<AddKeyword/>} />
-        <Route path="/UpdateUser" element={<UpdateUser/>} />
+        <Route path="/DeleteUser" element={<DeleteUser/>} />
+        <Route path="/DeleteKeyword" element={<DeleteKeyword/>} />
         <Route element={<PrivateRoute/>}>
           
         </Route>
