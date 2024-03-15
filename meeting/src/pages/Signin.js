@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export default function Signin() {
     return (
-      <Link to={"/Signin"}>
+      <Link to={"/Dashboard"}>
             <span className='text-blue-700'>Signin </span>
       </Link>
     )

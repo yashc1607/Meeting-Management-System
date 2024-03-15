@@ -404,7 +404,7 @@ export const getGroups = async (req, res, next) => {
         sequelize.sync()
             .then(async () => {
                 // Insert new row using `create()` method
-                const groupsId = await Group.findAll();
+                const groups = await Group.findAll();
             
                 console.log('Successfully found Groups!');
                 res.status(200).send({
