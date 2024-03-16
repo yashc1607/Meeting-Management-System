@@ -87,9 +87,7 @@ export default function DeleteKeyword() {
         <div>
             <AdminAction />
             <div class="container col-lg-6 col-sm-8 card text-center mt-3 p-5">
-                <div class="card-header">
-                    <h1 className="text-3xl font-semibold text-center">Delete Keyword</h1>
-                </div>
+                <h1 className="text-3xl font-semibold text-center">Delete Keyword</h1>
                 <div class="card-body ">
                     <form onSubmit={handleSubmit}>
                         <div class="input-group">

@@ -67,9 +67,7 @@ export default function AddKeyword() {
         <div>
             <AdminAction />
             <div class="container col-lg-6 col-sm-8 card text-center mt-3 p-5">
-                <div class="card-header">
-                    <h1 className="text-3xl font-semibold text-center">Add New Keyword</h1>
-                </div>
+                <h1 className="text-3xl font-semibold text-center">Add New Keyword</h1>
                 <div class="card-body ">
 
                     <form onSubmit={handleSubmit}>
@@ -82,12 +80,15 @@ export default function AddKeyword() {
                             </select>
 
                         </div>
-                        <div class="input-group">
-
-                            <input type="text" class="form-control" id="keyword" name="keyword" onChange={handleChange} aria-label="..." value={formData.keyword} required />
-                            <button type="submit" class="btn btn-success input-group-btn">
-                                {loading ? 'Adding...' : 'Add Keyword'}
-                            </button>
+                        <div class="input-group justify-content-center align-items-center">
+                            <div class="col-auto p-2">
+                                <input type="text" class="form-control" id="keyword" name="keyword" onChange={handleChange} aria-label="..." value={formData.keyword} required />
+                            </div>
+                            <div class="col-auto p-2">
+                                <button type="submit" class="btn btn-success input-group-btn">
+                                    {loading ? 'Adding...' : 'Add Keyword'}
+                                </button>
+                            </div>
                         </div>
                         <div>
 

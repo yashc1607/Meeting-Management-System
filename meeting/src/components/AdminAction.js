@@ -36,6 +36,14 @@ export default function AdminAction() {
             {/* <li><hr class="dropdown-divider"/></li> */}
           </ul>
         </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Roles</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/AddRole">Add Role</a></li>
+            <li><a class="dropdown-item" href="/AssignRole">Assign Roles</a></li>
+            {/* <li><hr class="dropdown-divider"/></li> */}
+          </ul>
+        </li>
     </ul>
   );
 }
