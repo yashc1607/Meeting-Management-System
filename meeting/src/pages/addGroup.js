@@ -64,18 +64,19 @@ export default function AddGroup() {
         <div>
             <AdminAction />
             <div class="container col-lg-6 col-sm-8 card text-center mt-3 p-5">
-                <div class="card-header">
-                    <h1 className="text-3xl font-semibold text-center">Add New Group</h1>
-                </div>
+                <h1 className="text-3xl font-semibold text-center">Add New Group</h1>
                 <div class="card-body ">
 
                     <form onSubmit={handleSubmit}>
-                        <div class="input-group">
-
-                            <input type="text" class="form-control" id="group_name" name="group_name" onChange={handleChange} aria-label="..." value={formData.group_name} required />
-                            <button type="submit" class="btn btn-success input-group-btn">
-                                {loading ? 'Adding...' : 'Add Group'}
-                            </button>
+                        <div class="input-group justify-content-center align-items-center">
+                            <div class="col-auto p-2">
+                                <input type="text" class="form-control" id="group_name" name="group_name" onChange={handleChange} aria-label="..." value={formData.group_name} required />
+                            </div>
+                            <div class="col-auto p-2">
+                                <button type="submit" class="btn btn-success input-group-btn">
+                                    {loading ? 'Adding...' : 'Add Group'}
+                                </button>
+                            </div>
                         </div>
                         <div>
 
