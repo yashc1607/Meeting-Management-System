@@ -32,10 +32,9 @@ export default function App() {
           <Route path="/AddRole" element={<Protected ><AddRole /></Protected>} />
           <Route path="/AssignRole" element={<Protected ><AssignRole /></Protected>} />
           <Route path="/AssignGroup" element={<Protected ><AssignGroup /></Protected>} />
-                                        
-          <Route path="/Dashboard" element={<Dashboard/>} />
-          <Route path="/account" element={<Protected ><Account /></Protected>}/>
-                                        
+          <Route path="/RemoveAssignedGroup" element={<Protected ><RemoveAssignedGroup /></Protected>} />
+          <Route path="/Dashboard" element={<Protected ><Dashboard /></Protected>} />
+          <Route path="/account" element={<Protected ><Account /></Protected>}/>                   
         </Routes>
        </AuthContextProvider>
     </Router>
