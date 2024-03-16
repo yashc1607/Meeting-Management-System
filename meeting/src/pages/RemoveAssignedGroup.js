@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
-
 export default function RemoveAssignedGroup() {
     const [formData, setFormData] = useState({
         user_id: 0,
@@ -121,7 +120,6 @@ export default function RemoveAssignedGroup() {
     };
     console.log(groupData);
     console.log(allGroupData);
-    console.log(selectedOption);
     return (
         <div>
             <AdminAction />

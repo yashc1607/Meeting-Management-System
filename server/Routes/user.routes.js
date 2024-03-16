@@ -2,7 +2,7 @@ import express from 'express';
 import { addDepartment, addGroup, addRole, addUser, assignGroup, assignKeyword, assignRole, getAllUser, getAssignedGroups, getAssignedKeywords, getAssignedRoles, getDepartments, getGroups, getRoles, getUser, getUserGroups, removeAssignedGroup, removeAssignedKeyword, removeAssignedRole, removeDepartment, removeGroup, removeRole, removeUser, updateAssignedRole, updateDepartment, updateGroup, updateRole } from '../Controller/userController.js';
 import { addMeeting, addMeetingKeywords, addParticipants } from '../Controller/meetingController.js';
 const userRouter = express.Router();
-
+//userRouter.use();
 //public path
 userRouter.post('/addUser',addUser);
 userRouter.post('/getuser',getUser);

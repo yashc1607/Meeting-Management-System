@@ -210,7 +210,7 @@ export const addRole = async (req, res, next) => {
             .then(async () => {
                 // Insert new row using `create()` method
                 await Role.create({
-                    role_name: data.role,
+                    role_name: data.role_name,
                 })
                 console.log('Successfully added a new Role!');
                 res.status(200).send({
@@ -716,9 +716,6 @@ export const getAssignedRoles = async (req, res, next) => {
                     "message":"Failed to get user-roles : "+error,
                 });
             })
-
-        
-
     } catch (error) {
         next(error);
     }
@@ -750,9 +747,6 @@ export const assignRole = async (req, res, next) => {
                     "message":"Failed to add user-role : "+error,
                 });
             })
-
-        
-
     } catch (error) {
         next(error);
     }
@@ -766,9 +760,6 @@ export const updateAssignedRole = async (req, res, next) => {
         //
         const data = req.body;
         console.log(data);
-
-        
-
         sequelize.sync()
             .then(async () => {
                 // Insert new row using `create()` method

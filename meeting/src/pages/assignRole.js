@@ -7,14 +7,12 @@ export default function AssignRole() {
     const [formData, setFormData] = useState({
         email: ''
     });
-    const { currentUser } = useSelector((state) => state.user);
     const [loading, setLoading] = useState(false);
-    const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(false);
-    const [tableData, setTableData] = useState([]);
+    const [roleData, setroleData] = useState([]);
     const [msg, setmsg] = useState('');
     // State to store the selected option
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedOption, setSelectedOption] = useState(0);
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -28,7 +26,7 @@ export default function AssignRole() {
         const url = `http://localhost:8000/getRoles`;
         const response = await fetch(url);
         const data = await response.json();
-        setTableData(data.groups);
+        setroleData(data.roles);
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -90,7 +88,7 @@ export default function AssignRole() {
         }
     };
     
-    //console.log(tableData);
+    //console.log(roleData);
     //console.log(formData);
     return (
         <div>
@@ -104,7 +102,7 @@ export default function AssignRole() {
                                 <input type="text" class="form-control" id="email" name="email" onChange={handleChange} aria-label="..." value={formData.email} required />
                                 { <select id="dropdown" onChange={(e) => setSelectedOption(e.target.value)} value={selectedOption} required>
                                     <option value="">Select Role</option>
-                                    {tableData.map((item) => (
+                                    {roleData.map((item) => (
                                         <option key={item.id} value={item.id}>{item.role_name}</option>
                                     ))}
                                 </select> }
