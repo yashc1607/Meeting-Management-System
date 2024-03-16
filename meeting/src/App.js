@@ -11,6 +11,9 @@ import DeleteKeyword from './pages/deleteKeyword';
 import PrivateRoute from './components/PrivateRoute';
 import AssignGroup from './pages/assignGroup';
 import AddGroup from './pages/addGroup';
+import RemoveAssignedGroup from './pages/RemoveAssignedGroup';
+import Dashboard from './pages/Dashboard';
+import HostMeeting from './pages/HostMeeting';
 
 export default function App() {
   return (
@@ -25,8 +28,10 @@ export default function App() {
           <Route path="/DeleteKeyword" element={<DeleteKeyword/>} />
           <Route path="/AddGroup" element={<AddGroup/>} />
           <Route path="/AssignGroup" element={<AssignGroup/>} />
+          <Route path="/Dashboard" element={<Dashboard/>} />
+          <Route path="/HostMeeting" element={<HostMeeting/>} />
+          <Route path="/RemoveAssignedGroup" element={<RemoveAssignedGroup/>} />
           <Route path="/account" element={<Protected ><Account /></Protected>}/>
-          <Route element={<PrivateRoute/>}></Route>
         </Routes>
        </AuthContextProvider>
     </Router>

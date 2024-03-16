@@ -94,7 +94,6 @@ export const getAllUser = async (req, res, next) => {
     }
 }
 
-
 //ADD USER
 export const addUser = async (req, res, next) => {
     try {
@@ -128,7 +127,6 @@ export const addUser = async (req, res, next) => {
         next(error);
     }
 }
-
 
 //REMOVE USER
 export const removeUser = async (req, res, next) => {
@@ -377,8 +375,6 @@ export const addDepartment = async (req, res, next) => {
 export const updateDepartment = async (req, res, next) => {
     try {
         console.log("arrived");
-        // console.log(req);
-        //
         const data = req.body;
         console.log(data);
         sequelize.sync()
@@ -401,9 +397,6 @@ export const updateDepartment = async (req, res, next) => {
                     "message":"Failed to update department : "+error,
                 });
             })
-
-        
-
     } catch (error) {
         next(error);
     }
@@ -413,8 +406,6 @@ export const updateDepartment = async (req, res, next) => {
 export const removeDepartment = async (req, res, next) => {
     try {
         console.log("arrived");
-        // console.log(req);
-        //
         const data = req.body;
         console.log(data);
         sequelize.sync()
@@ -447,8 +438,6 @@ export const removeDepartment = async (req, res, next) => {
 export const getGroups = async (req, res, next) => {
     try {
         console.log("arrived");
-        // console.log(req);
-        //
         const data = req.body;
         console.log(data);
         sequelize.sync()
@@ -467,9 +456,36 @@ export const getGroups = async (req, res, next) => {
                     "message":"Failed to get groups : "+error,
                 });
             })
+    } catch (error) {
+        next(error);
+    }
+}
 
-        
-
+//get user groups
+export const getUserGroups = async (req, res, next) => {
+    try {
+        console.log("arrived");
+        const data = req.body;
+        console.log(data);
+        sequelize.sync()
+            .then(async () => {
+                // Insert new row using `create()` method
+                const groups = await UserGroup.findAll({where:{
+                    userID:data.user_id
+                    }
+                });
+                console.log('Successfully found user Groups!');
+                res.status(200).send({
+                    "message":"success",
+                    "groups":groups
+                });
+            })
+            .catch((error) => {
+                console.log('Failed to synchronize with the database:', error);
+                res.status(200).send({
+                    "message":"Failed to get user groups : "+error,
+                });
+            })
     } catch (error) {
         next(error);
     }
@@ -479,9 +495,7 @@ export const getGroups = async (req, res, next) => {
 export const addGroup = async (req, res, next) => {
     try {
         console.log("arrived");
-        // console.log(req);
-        //
-        const data = req.body;
+         const data = req.body;
         console.log(data);
         sequelize.sync()
             .then(async () => {
@@ -501,9 +515,6 @@ export const addGroup = async (req, res, next) => {
                     "message":"Failed to add group : "+error,
                 });
             })
-
-        
-
     } catch (error) {
         next(error);
     }
@@ -537,9 +548,6 @@ export const updateGroup = async (req, res, next) => {
                     "message":"Failed to update a group : "+error,
                 });
             })
-
-        
-
     } catch (error) {
         next(error);
     }
@@ -549,8 +557,6 @@ export const updateGroup = async (req, res, next) => {
 export const removeGroup = async (req, res, next) => {
     try {
         console.log("arrived");
-        // console.log(req);
-        //
         const data = req.body;
         console.log(data);
         sequelize.sync()
@@ -563,7 +569,6 @@ export const removeGroup = async (req, res, next) => {
                 console.log('Successfully removed Group!');
                 res.status(200).send({
                     "message":"Successfully removed  Group!",
-                    
                 });
             })
             .catch((error) => {
@@ -572,9 +577,6 @@ export const removeGroup = async (req, res, next) => {
                     "message":"Failed to remove group : "+error,
                 });
             })
-
-        
-
     } catch (error) {
         next(error);
     }
@@ -584,8 +586,6 @@ export const removeGroup = async (req, res, next) => {
 export const assignGroup = async (req, res, next) => {
     try {
         console.log("arrived");
-        // console.log(req);
-        //
         const data = req.body;
         console.log(data);
         sequelize.sync()
@@ -606,13 +606,12 @@ export const assignGroup = async (req, res, next) => {
                     "message":"Failed to add user-group : "+error,
                 });
             })
-
-        
-
     } catch (error) {
         next(error);
     }
 }
+
+
 
 //remove assigned group
 export const removeAssignedGroup = async (req, res, next) => {
@@ -627,7 +626,8 @@ export const removeAssignedGroup = async (req, res, next) => {
                 // Insert new row using `create()` method
                 await UserGroup.destroy({
                     where:{
-                        id:data.usergroup_id
+                        //id:data.usergroup_id
+                        id:data.id
                     }
                 })
                 console.log('Successfully removed User-Group!');

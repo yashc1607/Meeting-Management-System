@@ -5,6 +5,7 @@ import AddKeyword from '../pages/addKeyword';
 import DeleteKeyword from '../pages/deleteKeyword';
 import AddGroup from '../pages/addGroup';
 import AssignGroup from '../pages/assignGroup';
+import RemoveAssignedGroup from '../pages/RemoveAssignedGroup';
 export default function AdminAction() {
   return (
     <ul className="nav nav-pills navbar navbar-expand-sm p-2 bg-light">
@@ -31,6 +32,7 @@ export default function AdminAction() {
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/AddGroup">Add Group</a></li>
             <li><a class="dropdown-item" href="/AssignGroup">Assign Group</a></li>
+            <li><a class="dropdown-item" href="/RemoveAssignedGroup">Remove Assign Group</a></li>
             {/* <li><hr class="dropdown-divider"/></li> */}
           </ul>
         </li>
