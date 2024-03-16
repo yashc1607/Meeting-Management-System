@@ -1,0 +1,6 @@
+.gitignore
+# dependencies
+meeting/node_modules/
+/meeting/node_modules/
+server/node_modules/
+/server/node_modules/
