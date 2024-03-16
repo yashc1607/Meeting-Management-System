@@ -3,7 +3,7 @@ import  {GoogleButton} from 'react-google-button';
 import { UserAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {auth} from '../firebase';
-function HomePage(){
+function Signin(){
 
   const {googleSignIn,user} = UserAuth();
   const navigate=useNavigate();
@@ -64,4 +64,4 @@ function HomePage(){
   );
 }
 
-export default HomePage;
+export default Signin;
