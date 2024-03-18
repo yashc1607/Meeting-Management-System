@@ -2,7 +2,7 @@ import express from 'express';
 
 import { addDepartment, addGroup, addRole, addUser, assignGroup, assignKeyword, assignRole, getAllUser, getAllUserRole, getAssignedGroups, getAssignedKeywords, getAssignedRoles, getDepartments, getGroups, getRoles, getUser, getUserAssignedKeywords, getUserGroups, removeAssignedGroup, removeAssignedKeyword, removeAssignedRole, removeDepartment, removeGroup, removeRole, removeUser, updateAssignedRole, updateDepartment, updateGroup, updateRole } from '../Controller/userController.js';
 import { addAgenda, addMeeting, addMeetingKeywords, addParticipants, getUpcomingMeetings } from '../Controller/meetingController.js';
-
+import {getUserMeetings} from '../Controller/meetingController.js';
 const userRouter = express.Router();
 //userRouter.use();
 //public path
@@ -50,5 +50,4 @@ userRouter.post('/getuserassignedkeywords',getUserAssignedKeywords);
 userRouter.post('/getUpcomingMeetings',getUpcomingMeetings);
 userRouter.post('/addAgenda',addAgenda);
 userRouter.post('/getUserMeetings',getUserMeetings);
-
 export default userRouter; 
