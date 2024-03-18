@@ -210,7 +210,7 @@ export const addRole = async (req, res, next) => {
             .then(async () => {
                 // Insert new row using `create()` method
                 await Role.create({
-                    role_name: data.role,
+                    role_name: data.role_name,
                 })
                 console.log('Successfully added a new Role!');
                 res.status(200).send({
@@ -697,13 +697,21 @@ export const getAssignedRoles = async (req, res, next) => {
                 const rolesId = await UserRole.findAll({
                     where:{
                         userID: data.user_id,
-                    }    
-                })
-                const roles = await Role.findAll({
-                    where:{
-                        id:[...rolesId]
                     }
                 })
+
+                console.log("rolesID::"+rolesId);
+                const ids = rolesId.map((item)=>
+                    item.dataValues.roleID);
+
+
+                const ids = rolesId.map((item)=>item.dataValues.id);
+                const roles = await Role.findAll({
+                    where:{
+                        id:[...ids]
+                    }
+                })
+                console.log("roles::"+roles);
                 console.log('Successfully found User-Roles!');
                 res.status(200).send({
                     "message":"success",
@@ -716,9 +724,40 @@ export const getAssignedRoles = async (req, res, next) => {
                     "message":"Failed to get user-roles : "+error,
                 });
             })
+    } catch (error) {
+        next(error);
+    }
+}
 
-        
-
+//get assigned roled to user
+export const getAllUserRole = async (req, res, next) => {
+    try {
+        console.log("arrived");
+        // console.log(req);
+        //
+        const data = req.body;
+        console.log(data);
+        sequelize.sync()
+            .then(async () => {
+                // Insert new row using `create()` method
+                const rolesId = await UserRole.findAll()
+                // const roles = await Role.findAll({
+                //     where:{
+                //         id:[...rolesId]
+                //     }
+                // })
+                console.log('Successfully found User-Roles!');
+                res.status(200).send({
+                    "message":"success",
+                    "roles":rolesId
+                });
+            })
+            .catch((error) => {
+                console.log('Failed to synchronize with the database:', error);
+                res.status(200).send({
+                    "message":"Failed to get user-roles : "+error,
+                });
+            })
     } catch (error) {
         next(error);
     }
@@ -750,9 +789,6 @@ export const assignRole = async (req, res, next) => {
                     "message":"Failed to add user-role : "+error,
                 });
             })
-
-        
-
     } catch (error) {
         next(error);
     }
@@ -766,9 +802,6 @@ export const updateAssignedRole = async (req, res, next) => {
         //
         const data = req.body;
         console.log(data);
-
-        
-
         sequelize.sync()
             .then(async () => {
                 // Insert new row using `create()` method
@@ -942,4 +975,49 @@ export const removeAssignedKeyword = async (req, res, next) => {
     }
 }
 
+//getUserAssignedKeywords
+export const getUserAssignedKeywords = async (req, res, next) => {
+    try {
+        console.log("arrived");
+        // console.log(req);
+        //
+        const data = req.body;
+        console.log(data);
+        sequelize.sync()
+            .then(async () => {
+                // Insert new row using `create()` method
+
+                const roles = await UserRole.findAll({
+                    where:{
+                        userID:data.user_id
+                    }
+                })
+
+                const ids = roles.map((item)=>item.dataValues.roleID);
+                console.log("IDDDDDDDDDDDDDDDDD");
+                console.log(ids);
+                const keywords = await RoleKeyword.findAll({
+                    where:{
+                    roleID: [...ids]
+                    }
+                })
+                console.log('Successfully fetched user assigned keywords!');
+                res.status(200).send({
+                    "message":"Successfully fetched user's keywords!",
+                    "keywords":keywords
+                });
+            })
+            .catch((error) => {
+                console.log('Failed to synchronize with the database:', error);
+                res.status(200).send({
+                    "message":"Failed to fetch user role-keyword : "+error,
+                });
+            })
+
+        
+
+    } catch (error) {
+        next(error);
+    }
+}
 

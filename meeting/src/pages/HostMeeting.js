@@ -2,12 +2,47 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
+import { UserAuth } from '../context/AuthContext';
+
 
 export default function HostMeeting() {
     const [formData, setFormData] = useState({
-        emailId: '',
+        title: '',
+        agenda: '',
+        venue: '', 
+        date: ''
     });
-    const { currentUser } = useSelector((state) => state.user);
+    const [selectedKeys,setSelectedKeys] = useState(new Set()); 
+
+    const { user } = UserAuth();
+    console.log("UserAuth : ", user);
+    useEffect(() => {
+        // if (selectedRole) {
+        console.log("UserEffect : ", user); 
+        if (user) {
+            onLoadCall();
+        }
+        else {
+            console.log(alert("else"));
+        }
+        // }
+    }, [user]);
+
+    // const [currentUser,setCurrentUser] = useState(null);//
+    const [currentUser, setCurrUser] = useState(null);
+    const onLoadCall = async () => {
+        await fetchUser();
+        console.log("ON");
+        if (userID) {
+
+            await fetchKeywordData();
+            await fetchUserGroups(userID);
+        }
+        else {
+            console.log("BEFOREEEEEEEEEEEEE");
+        }
+    }
+
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(false);
@@ -20,31 +55,35 @@ export default function HostMeeting() {
     const [keywordData, setKeywordData] = useState([]);
     const [selectedRole, setSelectedRole] = useState(1); //change to 0 later
     const [selectedKeyword, setSelectedKeyword] = useState(0);
+    const [userID, setUserID] = useState(null); //userID
 
-    const selectedKeys = new Map();
-    const fetchKeywordData = async () => {
-        const url = `http://localhost:8000/getAssignedKeywords`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                role_id: selectedRole
-            }),
-        });
-        const data = await response.json();
-        setKeywordData(data.keywords);
-        keywordData.forEach(element => {
-            selectedKeys.set(element.id, false);
-        })
-        console.log(keywordData);
-    };
-    useEffect(() => {
-        if (selectedRole) {
-            fetchKeywordData();
+    const fetchKeywordData = async () => {   
+        try { 
+            const url = `http://localhost:8000/getuserassignedkeywords`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id:userID
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setKeywordData(data.keywords);
+                // const mp = {};
+                // keywordData.forEach(element => {
+                //     mp[element] = false;
+                // })
+                // setSelectedKeys({...mp});
+            }  
+            console.log(keywordData);
+        } catch (error) {  
+            console.log("FETCH KEYWORD DATA", error);
         }
-    }, [selectedRole]);
+
+    };
 
     // ===============================================
     const [searchedUser, setSearchUser] = useState("");
@@ -56,18 +95,28 @@ export default function HostMeeting() {
             const url = `http://localhost:8000/getUser`;
             const res = await fetch(url, {
                 method: 'POST',
-                headers: {
+                headers: {  
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    ...formData,
+                    "email_id": user.email
                 }),
             });
-            const data = await res.json();
-            setLoading(false);
-            if (data.success === false) {
-                setError(data.message);
+            if (res.ok) {
+                const data = await res.json();
+
+                setCurrUser(prevState => data.user);
+                setUserID(data.user.id);
+
+                console.log(userID + " : CURRENT : ", data);
+                console.log("CURRENT : ", data.user);
+                console.log("CURRENT : ", currentUser);
+                setLoading(false);
+                if (data.success === false) {
+                    setError(data.message);
+                }
             }
+
         } catch (error) {
             setError(error.message);
             setLoading(false);
@@ -76,9 +125,6 @@ export default function HostMeeting() {
     // ===============================================
 
     const [users, setUsers] = useState([]);
-
-
-
 
     const addUser = (item) => {
         // setUsers((users)=>{return [...users,item]});
@@ -92,18 +138,11 @@ export default function HostMeeting() {
             return false;
         });
         setUsers([...list]);
-        // setUsers((users)=>new Map(users.set(item.id,item)))
-        // const old = new Map(users);
-        // old.set(item.id,item);
-        // setUsers(old);
     }
     const removeUser = (itemID) => {
         let list = users;
         list = list.filter(item => item.id !== itemID);
         setUsers([...list]);
-        // const old = new Map(users);
-        // old.delete(item.id); 
-        // setUsers(old);
     }
 
     const searchUser = async (e) => {
@@ -122,45 +161,252 @@ export default function HostMeeting() {
                     "email_id": searchedUser
                 }),
             });
-            const data = await res.json();
+            if(res.ok){
+                const data = await res.json();
             console.log(data);
 
             addUser(data.user);
-
+            setSearchUser("");    
             // setLoading(false);
             if (data.success === false) {
                 setError(data.message);
             }
+            }
+            
         } catch (error) {
             setError(error.message);
             setLoading(false);
         }
     };
-    console.log("OUT", users);
-    // useEffect(() => {
-    //     if (selectedRole) {
-    //         // fetchKeywordData();
-    //     }
-    // }, [users]);
-    //console.log(formData);
-    return (
 
+    // ==============================================================
+    const [groupData, setGroupData] = useState([]);
+    const [allGroupData, setAllGroupData] = useState([]);
+    const [selectedGroups,setSelectedGroups] = useState(new Set()); 
+    const fetchUserGroups = async (userID) => {
+        try {
+            const url = `http://localhost:8000/getUserGroups`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "user_id": userID
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setGroupData(data.groups);
+                console.log("Groups", data.groups);
+                fetchData();
+            } else {
+                // setGroupData({});
+                setError('Failed to fetch user groups');
+            }
+        } catch (error) {
+            console.log("FETCH USER GP : ", error);
+            setError("FETCH USER GP : ", error.message);
+        }
+    };
+
+    const fetchData = async () => {
+        try {
+            const url = `http://localhost:8000/getGroups`;
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                setAllGroupData(data.groups);
+            }
+        } catch (error) {
+            alert("Get Groups : " + error);
+        }
+
+    };
+    const [roleData, setroleData] = useState([]);
+
+    const fetchRoles = async () => {
+        try {
+            const url = `http://localhost:8000/getassignedroles`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "user_id": userID
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setGroupData(data.groups);
+                console.log("Groups", data.groups);
+                fetchData();
+            } else {
+                // setGroupData({});
+                setError('Failed to fetch user groups');
+            }
+        } catch (error) {
+            console.log("FETCH USER GP : ", error);
+            setError("FETCH USER GP : ", error.message);
+        }    };
+
+
+    const handleHostMeetingSubmit = async (e) => {
+
+        e.preventDefault();
+        let agendaID = -1;
+        if (formData.agenda !== "") {
+            agendaID = userID
+        }
+        if (formData.date === "") {
+            alert("Enter Date");
+        }
+        let savedMeeting = null;
+
+        try {
+            const url = `http://localhost:8000/addMeeting`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "host_id": userID,
+                    "agenda": formData.agenda,
+                    "title": formData.title,
+                    "agenda_user_id": agendaID,
+                    "meeting_data": "",
+                    "venue": formData.venue,
+                    "date": formData.date
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setFormData({ venue: "", date: "", agenda: "", title: "" })
+                savedMeeting = data.meeting;
+
+                console.log("ADD MEETING", data);
+            } else {
+                // setGroupData({});
+                setError('Failed to add meeting');
+            }
+        } catch (error) {
+            console.log("FETCH USER GP : ", error);
+            setError("FETCH USER GP : ", error.message);
+        }
+        //////
+        let groupids = [];
+          selectedGroups.forEach((value)=>{
+             groupids.push(value);
+         });        
+        console.log("SELECTED GPS : ",selectedGroups);
+        let userids = users.map((item)=>item.id);
+        try {
+            const url = `http://localhost:8000/addparticipants`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    "meeting_id": savedMeeting.id,
+                    "users": userids,
+                    "groups": groupids
+                }),
+            });
+            if (response.ok) { 
+                const data = await response.json();
+                setFormData({ venue: "", date: "", agenda: "", title: "" })
+                
+                
+                console.log("ADD MEETING", data);
+            } else {
+                // setGroupData({});
+                setError('Failed to add meeting');
+            }
+        } catch (error) {
+
+        }
+        //keywords part
+        let reskeys = Array.from(selectedKeys);
+        reskeys = keywordData 
+                    .filter((item)=>reskeys.includes(item.id))
+                    .map((item)=>item.keyword)
+        try {
+            const url = `http://localhost:8000/addmeetingkeyword`;
+            const response = await fetch(url, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "meeting_id": savedMeeting.id,
+                    "keywords":reskeys
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                // setFormData({ venue: "", date: "", agenda: "", title: "" })
+                // const mp = {};
+                // keywordData.forEach(element => {
+                //     mp[element] = false;
+                // });
+                // setSelectedKeys({...mp});
+                console.log("ADD MEETING", data);
+            } else {
+                // setGroupData({});  
+                setError('Failed to add meeting');
+            }
+        } catch (error) {
+
+        }
+
+    }
+    console.log("Before Toggle : ",selectedGroups); 
+    const toggleItem = (itemId) => {
+        // console.log("TOGGLE : ",selectedKeys);
+        const newSelectedItems = new Set(selectedKeys);
+        if (selectedKeys.has(itemId)) {
+          newSelectedItems.delete(itemId); 
+        } else {  
+          newSelectedItems.add(itemId);
+        }
+        setSelectedKeys(newSelectedItems);
+        console.log(selectedKeys);
+      }; 
+      const toggleItem2 = (itemId) => {
+        const newSelected = new Set(selectedGroups);
+        if (selectedGroups.has(itemId)) {
+          newSelected.delete(itemId);
+        } else { 
+          newSelected.add(itemId);
+        }
+        setSelectedGroups(newSelected);
+      }; 
+    return (     
+ 
         <div className='p-5 card m-3 '>
 
-            <form className="row g-3">
+            <form className="row g-3" onSubmit={handleHostMeetingSubmit}>
+                {/* TITLE */}
+                <div className="col-md-6">
+                    <label htmlFor="title" className="form-label">Title</label>
+                    <input type="text" onChange={(e) => setFormData({ ...formData, 'title': e.target.value })} value={formData.title} className="form-control" id="title" />
+                </div>
                 {/* AGENDA */}
                 <div className="col-md-6">
                     <label htmlFor="agenda" className="form-label">Agenda</label>
-                    <input type="text" className="form-control" id="agenda" />
+                    <input type="text" onChange={(e) => setFormData({ ...formData, 'agenda': e.target.value })} value={formData.agenda} className="form-control" id="agenda" />
                 </div>
-                <div className="col-md-6">
+                {/* <div className="col-md-6">
 
-                </div>
+                </div> */}
 
                 {/* VENUE */}
                 <div className="col-md-6">
                     <label htmlFor="venue" className="form-label">Venue</label>
-                    <input type="text" className="form-control" id="venue" placeholder="Place" />
+                    <input type="text" onChange={(e) => setFormData({ ...formData, 'venue': e.target.value })} value={formData.venue} className="form-control" id="venue" placeholder="Place" />
                 </div>
                 {/* KEYWORD SEARCH */}
                 <div className="col-md-2">
@@ -169,17 +415,17 @@ export default function HostMeeting() {
                     <div id="dd" className="dropdown">
                         <button id="dropdown" className=" btn btn-outline-secondary dropdown-toggle" onChange={(e) => setSelectedKeyword(e.target.value)} value={selectedKeyword} type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Choose
-                        </button>
-                        <ul class="dropdown-menu">
-                            {
+                        </button> 
+                        <ul className="dropdown-menu">
+                            { 
                                 keywordData.map((item) => (
 
                                     <li>
-                                        <div>
-                                            <a class="dropdown-item" href="#">
-                                                <input className='form-check-input ' onChange={() => { selectedKeys.set(item.id, !selectedKeys.get(item.id)); console.log(selectedKeys) }} style={{ transform: "scale(1.5)" }} type="checkbox" name={item.id} id={item.id} />
-                                                <label className='form-check-label ml-2' htmlFor={item.id}><span className='pl-3'>&nbsp;&nbsp;{item.keyword}</span></label>
-                                                <hr className="dropdown-divider" />
+                                        <div>  
+                                            <a className="dropdown-item" href="#">
+                                                <input className='form-check-input ' onChange={(e) => { toggleItem(item.id); console.log("ssssele KEYSS",selectedKeys) }} style={{ transform: "scale(1.5)" }} checked={selectedKeys.has(item.id) } type="checkbox" name={item.id} id={item.id} />
+                                                <label className='form-check-label ml-2' htmlFor={item.id}><span className='pl-3'>&nbsp;&nbsp;{item.keyword}</span></label>  
+                                                <hr className="dropdown-divider" /> 
                                             </a>
                                         </div>
 
@@ -193,27 +439,31 @@ export default function HostMeeting() {
                 {/* {JSON.stringify(users)} */}
                 {/* GROUP SELECTION */}
                 <div className="col-md-2">
-
+                    {/* {groupData} */}
                     <label htmlFor="dd" className="form-label">Groups</label>
                     <div id="dd" className="dropdown">
-                        <button id="dropdown" className=" btn btn-outline-secondary dropdown-toggle" onChange={(e) => setSelectedKeyword(e.target.value)} value={selectedKeyword} type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button id="dropdown" className=" btn btn-outline-secondary dropdown-toggle"  type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Choose
-                        </button>
-                        <ul class="dropdown-menu">
-                            {
-                                keywordData.map((item) => (
+                        </button> 
+                        <ul className="dropdown-menu"> 
 
-                                    <li>
-                                        <div>
-                                            <a class="dropdown-item" href="#">
-                                                <input className='form-check-input ' onChange={() => { selectedKeys.set(item.id, !selectedKeys.get(item.id)); console.log(selectedKeys) }} style={{ transform: "scale(1.5)" }} type="checkbox" name={item.id} id={item.id} />
-                                                <label className='form-check-label ml-2' htmlFor={item.id}><span className='pl-3'>&nbsp;&nbsp;{item.keyword}</span></label>
-                                                <hr className="dropdown-divider" />
-                                            </a>
-                                        </div>
+                            { 
+                                groupData.map((item) => {   
+                                    const correspondingGroup = allGroupData.find(group => group.id === item.groupID);
+                                    const groupName = correspondingGroup ? correspondingGroup.group_name : "";
 
-                                    </li>
-                                ))
+                                    return (<>
+                                        <li> 
+                                            <div>
+                                                <a className="dropdown-item" href="#">
+                                                    <input className='form-check-input' onChange={(e) => { toggleItem2(item.groupID); console.log("ssssele GPSSSS",selectedGroups) }}   style={{ transform: "scale(1.5)" }} checked={selectedGroups.has(item.groupID) || false } type="checkbox" name={item.groupID} id={item.groupID} />
+                                                    <label className='form-check-label ml-2' htmlFor={item.groupID}><span className='pl-3'>&nbsp;&nbsp;{groupName}</span></label>
+                                                    <hr className="dropdown-divider" />
+                                                </a>
+                                            </div> 
+
+                                        </li></>)
+                                })
                             }
                         </ul>
                     </div>
@@ -224,7 +474,7 @@ export default function HostMeeting() {
                 {/* DATE/TIME */}
                 <div className='col-md-6'>
                     <label htmlFor="meetingtime" className='form-label'>Date/Time</label>
-                    <input className="form-control" type="datetime-local" id="meetingtime" name="meetingtime" />
+                    <input className="form-control" onChange={(e) => setFormData({ ...formData, 'date': e.target.value })} value={formData.date} type="datetime-local" id="meetingtime" name="meetingtime" />
                 </div>
                 {/* {JSON.stringify(Array.from(users))} */}
 
@@ -232,7 +482,7 @@ export default function HostMeeting() {
                 <div className='col-md-6'>
                     <label htmlFor="search" className="form-label">Search</label>
                     <div className="input-group mb-3">
-                        <input id="search" type="text" className="form-control" onChange={(e) => { console.log(e.target.value); setSearchUser(e.target.value) }} placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2" />
+                        <input id="search" type="text" className="form-control" onChange={(e) => { console.log(e.target.value); setSearchUser(e.target.value) }} value={searchedUser} placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2" />
                         <button className="btn btn-outline-secondary" onClick={searchUser} type="button" id="button-addon2">Search</button>
                     </div>
                 </div>
@@ -257,7 +507,7 @@ export default function HostMeeting() {
                     }
 
                 </div>
-
+                {error}
                 <div className="col-12">
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </div>

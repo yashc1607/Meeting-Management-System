@@ -3,9 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
 import HostMeeting from './HostMeeting';
+import { UserAuth } from '../context/AuthContext';
+import Protected from '../components/Protected';
+import UpcomingMeeting from './UpcomingMeetings';
 import PastMeeting from './PastMeeting';
-
-export default function Dashboard() {  
+export default function Dashboard() {
+    
+    const {logOut,user}=UserAuth();
+    // console.log("User : ",user);
+    // console.log("Email : ",user.email);
     const [formData, setFormData] = useState({
         emailId: '',
     });
@@ -50,7 +56,35 @@ export default function Dashboard() {
         minWidth: "15rem",
         maxWidth: "20rem",
     }
+
+
     //console.log(formData);
+    const validateElseAddUser = async () => {
+        const url = `http://localhost:8000/addUser`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "user":user
+            }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            // setKeywordData(data.keywords);
+            // keywordData.forEach(element => {
+                // selectedKeys.set(element.id, false);
+            // })
+        }
+        // console.log(keywordData);
+    };
+    useEffect(() => {
+        if (user) {
+            validateElseAddUser();
+        }
+    }, []);
+    
     return (
 
         <div className='p-5 mt-3 r-50'>
@@ -66,9 +100,13 @@ export default function Dashboard() {
                     </nav>
                     <div className="tab-content" id="nav-tabContent">
                         <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabIndex="0">A</div>
-                        <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabIndex="0"><HostMeeting></HostMeeting></div>
-                        <div className="tab-pane fade" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab" tabIndex="0">D</div>
-                        <div className="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabIndex="0"><PastMeeting></PastMeeting></div>
+
+
+                        
+                        <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabIndex="0"><Protected><HostMeeting /></Protected></div>
+                        <div className="tab-pane fade" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab" tabIndex="0"><Protected><UpcomingMeeting/></Protected></div>
+                        <div className="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabIndex="0"><Protected><PastMeeting/></Protected></div>
+
                     </div>
 
                     {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}

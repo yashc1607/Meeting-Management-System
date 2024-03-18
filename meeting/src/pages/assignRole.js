@@ -2,19 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
-
 export default function AssignRole() {
     const [formData, setFormData] = useState({
         email: ''
     });
-    const { currentUser } = useSelector((state) => state.user);
     const [loading, setLoading] = useState(false);
-    const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(false);
-    const [tableData, setTableData] = useState([]);
+    const [roleData, setroleData] = useState([]);
+    const [allUsers, setAllUsers] = useState([]);
+    const [allUserRoles, setAllUserRoles] = useState([]);
     const [msg, setmsg] = useState('');
-    // State to store the selected option
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedOption, setSelectedOption] = useState(0);
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -22,13 +20,45 @@ export default function AssignRole() {
         });
     };
     useEffect(() => {
-        fetchData();
+        fetchRoles();
+        fetchAllUsers();
+        fetchAllUserRoles();
     }, []);
-    const fetchData = async () => {
+    const fetchRoles = async () => {
         const url = `http://localhost:8000/getRoles`;
         const response = await fetch(url);
         const data = await response.json();
-        setTableData(data.groups);
+        console.log("userData" + data);
+        setroleData(data.roles);
+    };
+    const fetchAllUsers = async () => {
+        try {
+            const url = `http://localhost:8000/getAllUser`;
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                setAllUsers(data.user); // Set allUsers with the user array from the response
+            } else {
+                setError('Failed to fetch users');
+            }
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const fetchAllUserRoles = async () => {
+        try {
+            const url = `http://localhost:8000/getAllUserRole`;
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                setAllUserRoles(data.roles); // Set allUserRoles with the roles array from the response
+            } else {
+                setError('Failed to fetch user roles');
+            }
+        } catch (error) {
+            setError(error.message);
+        }
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -71,7 +101,7 @@ export default function AssignRole() {
                         setTimeout(() => {
                             window.location.reload();
                         }, 3000);
-                    } 
+                    }
                 } else {
                     setError('User not found');
                     setTimeout(() => {
@@ -89,40 +119,72 @@ export default function AssignRole() {
             setLoading(false);
         }
     };
-    
-    //console.log(tableData);
+
+    //console.log(roleData);
     //console.log(formData);
+    console.log("users" + allUsers);
+    console.log("roles" + allUserRoles);
     return (
         <div>
             <AdminAction />
-            <div class="container col-lg-6 col-sm-8 card text-center mt-3 p-5" style={{width: '30rem'}}>
-                <h1 className="text-3xl font-semibold text-center">Assign Role</h1>
-                <div class="card-body ">
-                    <form onSubmit={handleSubmit}>
-                        <div class="input-group justify-content-center align-items-center">
-                            <div class="col-auto p-2">
-                                <input type="text" class="form-control" id="email" name="email" onChange={handleChange} aria-label="..." value={formData.email} required />
-                                { <select id="dropdown" onChange={(e) => setSelectedOption(e.target.value)} value={selectedOption} required>
-                                    <option value="">Select Role</option>
-                                    {tableData.map((item) => (
-                                        <option key={item.id} value={item.id}>{item.role_name}</option>
-                                    ))}
-                                </select> }
+            <div className="container mt-3">
+                <div className="row">
+                    <div className="col-lg-6">
+                        <div className="card text-center p-5">
+                            <h1 className="text-3xl font-semibold">Assign Role</h1>
+                            <form onSubmit={handleSubmit}>
+                                <div className="input-group justify-content-center align-items-center">
+                                    <div className="col-auto p-2">
+                                        <input type="text" className="form-control" id="email" name="email" onChange={handleChange} aria-label="..." value={formData.email} required />
+                                        <select id="dropdown" onChange={(e) => setSelectedOption(e.target.value)} value={selectedOption} required>
+                                            <option value="">Select Role</option>
+                                            {roleData.map((item) => (
+                                                <option key={item.id} value={item.id}>{item.role_name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="col-auto p-2">
+                                        <button type="submit" className="btn btn-success">
+                                            {loading ? 'Assigning...' : 'Assign Role'}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    {error && <p className="text-danger">{error}</p>}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div className="col-lg-6">
+                        <div className="card">
+                            <div className="card-header">
+                                <h5 className="card-title">User List</h5>
                             </div>
-                            <div class="col-auto p-2">
-                                <button type="submit" class="btn btn-success input-role-btn">
-                                    {loading ? 'Assigning...' : 'Assign Role'}
-                                </button>
+                            <div className="card-body">
+                                <table className="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Email ID</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {allUsers.map((user) => {
+                                            const isUserRolePresent = allUserRoles.some(role => role.userID === user.id);
+                                            if (!isUserRolePresent && user.active) {
+                                                return (
+                                                    <tr key={user.id}>
+                                                        <td>{user.emailID}</td>
+                                                    </tr>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <div>
-
-                            {error && <p className="text-danger">{error}</p>}
-                        </div>
-                    </form>
-
+                    </div>
                 </div>
-                {<p>{msg}</p>}
             </div>
         </div>
     )

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
 
 export default function AssignGroup() {
@@ -9,32 +8,42 @@ export default function AssignGroup() {
     });
     const { currentUser } = useSelector((state) => state.user);
     const [loading, setLoading] = useState(false);
-    const [uploading, setUploading] = useState(false);
-    const [error, setError] = useState(false);
+    const [error, setError] = useState('');
     const [tableData, setTableData] = useState([]);
-    const [msg, setmsg] = useState('');
-    // State to store the selected option
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedOption, setSelectedOption] = useState(0);
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.id]: e.target.value,
         });
     };
+
     useEffect(() => {
         fetchData();
     }, []);
+
     const fetchData = async () => {
-        const url = `http://localhost:8000/getGroups`;
-        const response = await fetch(url);
-        const data = await response.json();
-        setTableData(data.groups);
+        try {
+            const url = `http://localhost:8000/getGroups`;
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                setTableData(data.groups);
+            } else {
+                throw new Error('Failed to fetch groups');
+            }
+        } catch (error) {
+            setError(error.message);
+        }
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             setLoading(true);
-            setError(false);
+            setError('');
+
             const url = `http://localhost:8000/getUser`;
             const res = await fetch(url, {
                 method: 'POST',
@@ -42,75 +51,102 @@ export default function AssignGroup() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email_id: formData.email // Use formData.email instead of formData.email_id
+                    email_id: formData.email
                 }),
             });
-            console.log(selectedOption);
-            if (res.ok) { // Check if the request was successful
+
+            if (res.ok) {
                 const data1 = await res.json();
-                console.log(data1);
-                if (data1.ok) { // Assuming the response indicates whether the user exists
-                    const url = `http://localhost:8000/assignGroup`;
-                    const res = await fetch(url, {
+                if (data1.ok) {
+                    await assignGroup(data1);
+                } else {
+                    setError('User not found');
+                }
+            } else {
+                setError('Failed to fetch user');
+            }
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const assignGroup = async (data1) => {
+        try {
+            const url = `http://localhost:8000/getUserGroups`;
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: data1.user.id
+                }),
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                console.log(data.groups);
+                console.log(selectedOption);
+                const groupIDs = data.groups.map(group => group.groupID);
+                console.log(groupIDs);
+                const alreadyInGroup = groupIDs.includes(Number(selectedOption));
+                for (let i = 0; i < data.groups.length; i++) {
+                    if(data.groups[i].groupID === selectedOption){
+                        console.log("mil gaya");
+                    }
+                }
+                console.log(typeof selectedOption);
+                console.log(typeof data.groups[0].groupID);
+                if (alreadyInGroup) {
+                    setError('User already part of group!');
+                } else {
+                    const assignRes = await fetch(`http://localhost:8000/assignGroup`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
                             group_id: selectedOption,
-                            user_id: data1.user.id // Use data1.user_id instead of formData.user_id
+                            user_id: data1.user.id 
                         }),
                     });
-                    console.log(res);
-                    const data = await res.json();
-                    setLoading(false);
-                    if (data.success === false) {
-                        setError(data.message);
+                    const assignData = await assignRes.json();
+
+                    if (assignRes.ok && assignData.success) {
+                        setError('User added to group!');
                     } else {
-                        setError('User added to group');
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 3000);
-                    } 
-                } else {
-                    setError('User not found');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
+                        setError(assignData.message || 'Failed to assign group');
+                    }
                 }
             } else {
-                setError('Failed to fetch user'); // Handle non-OK response
-                setTimeout(() => {
-                    window.location.reload();
-                }, 3000);
+                setError('Failed to get user groups');
             }
         } catch (error) {
             setError(error.message);
-            setLoading(false);
         }
     };
-    
-    //console.log(tableData);
-    //console.log(formData);
+
     return (
         <div>
             <AdminAction />
-            <div class="container col-lg-6 col-sm-8 card text-center mt-3 p-5">
+            <div className="container col-lg-6 col-sm-8 card text-center mt-3 p-5">
                 <h1 className="text-3xl font-semibold text-center">Assign Group</h1>
-                <div class="card-body ">
+                <div className="card-body ">
                     <form onSubmit={handleSubmit}>
-                        <div class="input-group justify-content-center align-items-center">
-                            <div class="col-auto p-2">
-                                <input type="text" class="form-control" id="email" name="email" onChange={handleChange} aria-label="..." value={formData.email} required />
-                                { <select id="dropdown" onChange={(e) => setSelectedOption(e.target.value)} value={selectedOption} required>
+                        <div className="input-group justify-content-center align-items-center">
+                            <div className="col-auto p-2">
+                                <input type="text" className="form-control" id="email" name="email" onChange={handleChange} aria-label="..." value={formData.email} required />
+                                <select id="dropdown" onChange={(e) => setSelectedOption(e.target.value)} value={selectedOption} required>
                                     <option value="">Select Group</option>
                                     {tableData.map((item) => (
                                         <option key={item.id} value={item.id}>{item.group_name}</option>
                                     ))}
-                                </select> }
+                                </select>
                             </div>
-                            <div class="col-auto p-2">
-                                <button type="submit" class="btn btn-success input-group-btn">
+                            <div className="col-auto p-2">
+                                <button type="submit" className="btn btn-success input-group-btn" disabled={loading}>
                                     {loading ? 'Assigning...' : 'Assign Group'}
                                 </button>
                             </div>
@@ -119,9 +155,7 @@ export default function AssignGroup() {
                             {error && <p className="text-danger">{error}</p>}
                         </div>
                     </form>
-
                 </div>
-                {<p>{msg}</p>}
             </div>
         </div>
     )

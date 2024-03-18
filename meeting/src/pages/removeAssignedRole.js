@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
-export default function RemoveAssignedGroup() {
+export default function RemoveAssignedRole() {
     const [formData, setFormData] = useState({
         user_id: 0,
         group_id: 0
@@ -9,8 +9,8 @@ export default function RemoveAssignedGroup() {
     const { currentUser } = useSelector((state) => state.user);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [groupData, setGroupData] = useState([]);
-    const [allGroupData, setAllGroupData] = useState([]);
+    const [roleData, setroleData] = useState([]);
+    const [allRoleData, setallRoleData] = useState([]);
     const [selectedOption, setSelectedOption] = useState('');
 
     const handleChange = (e) => {
@@ -44,8 +44,9 @@ export default function RemoveAssignedGroup() {
                     ...formData,
                     'user_id': data.user.id,
                 });
-                await fetchUserGroups(data.user.id);
-                await fetchGroups();
+                console.log("user"+data.user.id);
+                await fetchUserRoles(data.user.id);
+                await fetchroles();
             }
         } catch (error) {
             setError(error.message);
@@ -53,9 +54,9 @@ export default function RemoveAssignedGroup() {
         }
     };
 
-    const fetchUserGroups = async (userId) => {
+    const fetchUserRoles = async (userId) => {
         try {
-            const url = `http://localhost:8000/getUserGroups`;
+            const url = `http://localhost:8000/getAssignedRoles`;
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -65,26 +66,28 @@ export default function RemoveAssignedGroup() {
                     user_id: userId
                 }),
             });
+            console.log(userId);
             if (response.ok) {
+                console.log(response);
                 const data = await response.json();
-                setGroupData(data.groups);
+                setroleData(data.roles);
             } else {
-                setError('Failed to fetch user groups');
+                setError('Failed to fetch user roles');
             }
         } catch (error) {
             setError(error.message);
         }
     };
 
-    const fetchGroups = async (userId) => {
+    const fetchroles = async (userId) => {
         try {
-            const url = `http://localhost:8000/getGroups`;
+            const url = `http://localhost:8000/getRoles`;
             const response = await fetch(url);
             if (response.ok) {
                 const data = await response.json();
-                setAllGroupData(data.groups);
+                setallRoleData(data.roles);
             } else {
-                setError('Failed to fetch user groups');
+                setError('Failed to fetch roles');
             }
         } catch (error) {
             setError(error.message);
@@ -94,7 +97,7 @@ export default function RemoveAssignedGroup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = `http://localhost:8000/removeAssignedGroup`;
+            const url = `http://localhost:8000/removeAssignedRole`; // Correct endpoint for removing assigned roles
             const res = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -108,7 +111,7 @@ export default function RemoveAssignedGroup() {
             if (data.success === false) {
                 setError(data.message);
             } else {
-                setError('User removed from group');
+                setError('Role removed from user');
                 // Optionally update state to reflect changes without reloading
                 setTimeout(() => {
                     window.location.reload();
@@ -118,8 +121,9 @@ export default function RemoveAssignedGroup() {
             setError(error.message);
         }
     };
-    console.log(groupData);
-    console.log(allGroupData);
+    
+    console.log(roleData);
+    console.log(allRoleData);
     return (
         <div>
             <AdminAction />
@@ -140,12 +144,12 @@ export default function RemoveAssignedGroup() {
                         <form onSubmit={handleSubmit}>
                             <div className="input-group">
                                 <select onChange={(e) => setSelectedOption(e.target.value)} value={selectedOption} required>
-                                    <option value="">Select Group</option>
-                                    {groupData.map((item) => {
-                                        const correspondingGroup = allGroupData.find(group => group.id === item.groupID);
-                                        const groupName = correspondingGroup ? correspondingGroup.group_name : "";
+                                    <option value="">Select Role</option>
+                                    {roleData.map((item) => {
+                                        const correspondingGroup = allRoleData.find(role => role.id === item.id);
+                                        const roleName = correspondingGroup ? correspondingGroup.role_name : "";
                                         return (
-                                            <option key={item.id} value={item.id}>{groupName}</option>
+                                            <option key={item.id} value={item.id}>{roleName}</option>
                                         );
                                     })}
                                 </select>
