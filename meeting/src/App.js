@@ -36,7 +36,7 @@ export default function App() {
           <Route path="/RemoveAssignedGroup" element={<Protected ><RemoveAssignedGroup /></Protected>} />
           <Route path="/Dashboard" element={<Protected ><Dashboard /></Protected>} />
           <Route path="/account" element={<Protected ><Account /></Protected>}/>       
-          <Route path="/RemoveAssignedRole" element={<Protected ><RemoveAssignedRole /></Protected>}/>               
+          <Route path="/RemoveAssignedRole" element={<Protected ><RemoveAssignedRole /></Protected>}/>       
         </Routes>
        </AuthContextProvider>
     </Router>
