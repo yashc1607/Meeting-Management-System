@@ -5,6 +5,7 @@ import AdminAction from '../components/AdminAction';
 import HostMeeting from './HostMeeting';
 import { UserAuth } from '../context/AuthContext';
 import Protected from '../components/Protected';
+import UpcomingMeeting from './UpcomingMeetings';
 
 export default function Dashboard() {
     
@@ -99,8 +100,8 @@ export default function Dashboard() {
                     </nav>
                     <div className="tab-content" id="nav-tabContent">
                         <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabIndex="0">A</div>
-                        <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabIndex="0"><Protected><HostMeeting/></Protected></div>
-                        <div className="tab-pane fade" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab" tabIndex="0">D</div>
+                        <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabIndex="0"><Protected><HostMeeting /></Protected></div>
+                        <div className="tab-pane fade" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab" tabIndex="0"><Protected><UpcomingMeeting/></Protected></div>
                         <div className="tab-pane fade" id="nav-co   ntact" role="tabpanel" aria-labelledby="nav-contact-tab" tabIndex="0">C</div>
                     </div>
 
