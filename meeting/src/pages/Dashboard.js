@@ -3,8 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
 import HostMeeting from './HostMeeting';
+import PastMeeting from './PastMeeting';
 
-export default function Dashboard() {
+export default function Dashboard() {  
     const [formData, setFormData] = useState({
         emailId: '',
     });
@@ -67,7 +68,7 @@ export default function Dashboard() {
                         <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabIndex="0">A</div>
                         <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabIndex="0"><HostMeeting></HostMeeting></div>
                         <div className="tab-pane fade" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab" tabIndex="0">D</div>
-                        <div className="tab-pane fade" id="nav-co   ntact" role="tabpanel" aria-labelledby="nav-contact-tab" tabIndex="0">C</div>
+                        <div className="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabIndex="0"><PastMeeting></PastMeeting></div>
                     </div>
 
                     {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
