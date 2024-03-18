@@ -22,13 +22,7 @@ export const MeetingUser = sequelize.define('meetinguser', {
             key: 'id'   
         }
     },
-    groupID: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: Group, 
-            key: 'id'      
-        }
-    },
+   
     
 });
 
@@ -39,6 +33,3 @@ MeetingUser.belongsTo(Meeting, { foreignKey: 'meetingID' });
 // Define the association between Role and UserRole
 User.hasMany(MeetingUser, { foreignKey: 'userID' });
 MeetingUser.belongsTo(User, { foreignKey: 'userID' });
-//groups
-Group.hasMany(MeetingUser, { foreignKey: 'groupID' });
-MeetingUser.belongsTo(Group, { foreignKey: 'groupID' });
