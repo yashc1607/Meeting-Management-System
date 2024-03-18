@@ -701,8 +701,7 @@ export const getAssignedRoles = async (req, res, next) => {
                 })
 
                 console.log("rolesID::"+rolesId);
-                const ids = rolesId.map((item)=>
-                    item.dataValues.roleID);
+                //const ids = rolesId.map((item)=>item.dataValues.roleID);
 
 
                 const ids = rolesId.map((item)=>item.dataValues.id);
