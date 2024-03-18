@@ -697,18 +697,59 @@ export const getAssignedRoles = async (req, res, next) => {
                 const rolesId = await UserRole.findAll({
                     where:{
                         userID: data.user_id,
-                    }    
+                    }
                 })
+
+                console.log("rolesID::"+rolesId);
+                const ids = rolesId.map((item)=>
+                    item.dataValues.roleID);
+
+
                 const ids = rolesId.map((item)=>item.dataValues.id);
                 const roles = await Role.findAll({
                     where:{
                         id:[...ids]
                     }
                 })
+                console.log("roles::"+roles);
                 console.log('Successfully found User-Roles!');
                 res.status(200).send({
                     "message":"success",
                     "roles":roles
+                });
+            })
+            .catch((error) => {
+                console.log('Failed to synchronize with the database:', error);
+                res.status(200).send({
+                    "message":"Failed to get user-roles : "+error,
+                });
+            })
+    } catch (error) {
+        next(error);
+    }
+}
+
+//get assigned roled to user
+export const getAllUserRole = async (req, res, next) => {
+    try {
+        console.log("arrived");
+        // console.log(req);
+        //
+        const data = req.body;
+        console.log(data);
+        sequelize.sync()
+            .then(async () => {
+                // Insert new row using `create()` method
+                const rolesId = await UserRole.findAll()
+                // const roles = await Role.findAll({
+                //     where:{
+                //         id:[...rolesId]
+                //     }
+                // })
+                console.log('Successfully found User-Roles!');
+                res.status(200).send({
+                    "message":"success",
+                    "roles":rolesId
                 });
             })
             .catch((error) => {

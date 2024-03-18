@@ -41,6 +41,7 @@ export default function AdminAction() {
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/AddRole">Add Role</a></li>
             <li><a class="dropdown-item" href="/AssignRole">Assign Roles</a></li>
+            <li><a class="dropdown-item" href="/RemoveAssignedRole">Remove Assigned Roles</a></li>
             {/* <li><hr class="dropdown-divider"/></li> */}
           </ul>
         </li>
