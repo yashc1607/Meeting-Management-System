@@ -699,10 +699,13 @@ export const getAssignedRoles = async (req, res, next) => {
                         userID: data.user_id,
                     }
                 })
+
                 console.log("rolesID::"+rolesId);
                 const ids = rolesId.map((item)=>
                     item.dataValues.roleID);
 
+
+                const ids = rolesId.map((item)=>item.dataValues.id);
                 const roles = await Role.findAll({
                     where:{
                         id:[...ids]
@@ -972,4 +975,49 @@ export const removeAssignedKeyword = async (req, res, next) => {
     }
 }
 
+//getUserAssignedKeywords
+export const getUserAssignedKeywords = async (req, res, next) => {
+    try {
+        console.log("arrived");
+        // console.log(req);
+        //
+        const data = req.body;
+        console.log(data);
+        sequelize.sync()
+            .then(async () => {
+                // Insert new row using `create()` method
+
+                const roles = await UserRole.findAll({
+                    where:{
+                        userID:data.user_id
+                    }
+                })
+
+                const ids = roles.map((item)=>item.dataValues.roleID);
+                console.log("IDDDDDDDDDDDDDDDDD");
+                console.log(ids);
+                const keywords = await RoleKeyword.findAll({
+                    where:{
+                    roleID: [...ids]
+                    }
+                })
+                console.log('Successfully fetched user assigned keywords!');
+                res.status(200).send({
+                    "message":"Successfully fetched user's keywords!",
+                    "keywords":keywords
+                });
+            })
+            .catch((error) => {
+                console.log('Failed to synchronize with the database:', error);
+                res.status(200).send({
+                    "message":"Failed to fetch user role-keyword : "+error,
+                });
+            })
+
+        
+
+    } catch (error) {
+        next(error);
+    }
+}
 

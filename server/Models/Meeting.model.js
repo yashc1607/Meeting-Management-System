@@ -11,6 +11,10 @@ export const Meeting = sequelize.define('meeting', {
     agenda: {
         type: DataTypes.STRING,
     },
+    title: {
+        type: DataTypes.STRING,
+        allowNull:false
+    },
     hostID: {
         type: DataTypes.INTEGER,
         allowNull: false,

@@ -11,20 +11,38 @@ export const AuthContextProvider=({children})=>{
     const [user,setUser]=useState({});
 
     const googleSignIn=()=>{
-        const provider=new GoogleAuthProvider();
-        signInWithPopup(auth,provider);
+        try {
+            const provider=new GoogleAuthProvider();
+            signInWithPopup(auth,provider);
+        } catch (error) {
+            alert("Issue : "+error);
+        }
+        
     };
     const logOut=()=>{
-        signOut(auth)
+        try {
+            signOut(auth);     
+        } catch (error) {
+            alert("Sign OUT : "+error);
+        }
+       
     }
     useEffect(()=>{
-        const unsubscribe=onAuthStateChanged(auth,(currentUser)=>{
-            setUser(currentUser);
-            console.log('User',currentUser);
-        });
-        return()=>{
-            unsubscribe();
-        };
+        try {
+            const unsubscribe=onAuthStateChanged(auth,(currentUser)=>{
+                setUser(currentUser);
+                console.log('User :',currentUser);
+            });
+            return()=>{
+                unsubscribe();
+            };    
+        } catch (error) {
+            alert("Unsubscribe Auth Context : "+error);
+        }
+        return()=> (<>
+            <h1>Some Issue is There</h1>
+        </>);
+        
     },[]);
     
     return (
