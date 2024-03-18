@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { addDepartment, addGroup, addRole, addUser, assignGroup, assignKeyword, assignRole, getAllUser, getAssignedGroups, getAssignedKeywords, getAssignedRoles, getDepartments, getGroups, getRoles, getUser, getUserAssignedKeywords, getUserGroups, removeAssignedGroup, removeAssignedKeyword, removeAssignedRole, removeDepartment, removeGroup, removeRole, removeUser, updateAssignedRole, updateDepartment, updateGroup, updateRole } from '../Controller/userController.js';
+import { addDepartment, addGroup, addRole, addUser, assignGroup, assignKeyword, assignRole, getAllUser, getAllUserRole, getAssignedGroups, getAssignedKeywords, getAssignedRoles, getDepartments, getGroups, getRoles, getUser, getUserAssignedKeywords, getUserGroups, removeAssignedGroup, removeAssignedKeyword, removeAssignedRole, removeDepartment, removeGroup, removeRole, removeUser, updateAssignedRole, updateDepartment, updateGroup, updateRole } from '../Controller/userController.js';
 import { addAgenda, addMeeting, addMeetingKeywords, addParticipants, getUpcomingMeetings } from '../Controller/meetingController.js';
 
 const userRouter = express.Router();
@@ -49,6 +49,6 @@ userRouter.post('/addmeetingkeyword',addMeetingKeywords);
 userRouter.post('/getuserassignedkeywords',getUserAssignedKeywords);
 userRouter.post('/getUpcomingMeetings',getUpcomingMeetings);
 userRouter.post('/addAgenda',addAgenda);
-
+userRouter.post('/getUserMeetings',getUserMeetings);
 
 export default userRouter; 
