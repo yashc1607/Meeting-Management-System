@@ -2,12 +2,42 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
+import { UserAuth } from '../context/AuthContext';
 
 export default function HostMeeting() {
     const [formData, setFormData] = useState({
-        emailId: '',
+        title: '',
+        agenda:'',
+        venue:'',
     });
-    // const {user} = UserContext();
+    const {user}=UserAuth();
+    console.log("UserAuth : ",user);
+    useEffect(  () => {
+        // if (selectedRole) {
+            console.log("UserEffect : ",user);
+           if(user){
+              onLoadCall();
+           }
+           else {
+            console.log(alert("else"));
+           }
+        // }
+    }, [user]);
+
+    // const [currentUser,setCurrentUser] = useState(null);//
+    const [currentUser, setCurrUser] = useState(null);
+    const onLoadCall = async ()=>{
+             await fetchUser();
+             console.log("ON");
+             if(userID){
+                 await fetchKeywordData();
+                 await fetchUserGroups(userID);
+             }
+             else {
+                console.log("BEFOREEEEEEEEEEEEE");
+             }
+    }
+    
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(false);
@@ -20,7 +50,7 @@ export default function HostMeeting() {
     const [keywordData, setKeywordData] = useState([]);
     const [selectedRole, setSelectedRole] = useState(1); //change to 0 later
     const [selectedKeyword, setSelectedKeyword] = useState(0);
-    const [userID,setUserID] = useState(1); //userID
+    const [userID,setUserID] = useState(null); //userID
 
     const selectedKeys = new Map();
     const fetchKeywordData = async () => {
@@ -49,13 +79,7 @@ export default function HostMeeting() {
         }
         
     };
-    useEffect(() => {
-        // if (selectedRole) {
-           fetchKeywordData();
-           fetchUserGroups();
-        // }
-    }, []);
-
+    
     // ===============================================
     const [searchedUser, setSearchUser] = useState("");
     const fetchUser = async () => {
@@ -70,11 +94,18 @@ export default function HostMeeting() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    ...formData,
+                    "email_id":user.email
                 }),
             });
             if(res.ok) {
                 const data = await res.json();
+                
+                setCurrUser(prevState=>data.user);
+                setUserID(data.user.id);
+                
+                console.log(userID+" : CURRENT : ",data);
+                console.log("CURRENT : ",data.user);
+                console.log("CURRENT : ",currentUser);
             setLoading(false);
             if (data.success === false) {
                 setError(data.message);
@@ -143,8 +174,8 @@ export default function HostMeeting() {
     // ==============================================================
     const [groupData, setGroupData] = useState([]);
     const [allGroupData, setAllGroupData] = useState([]);
-
-    const fetchUserGroups = async (userId) => {
+    const selectedGroups = new Map();
+    const fetchUserGroups = async (userID) => {
         try {
             const url = `http://localhost:8000/getUserGroups`;
             const response = await fetch(url, {
@@ -152,8 +183,8 @@ export default function HostMeeting() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    "user_id": 1
+                body: JSON.stringify({ 
+                    "user_id": userID
                 }),
             });
             if (response.ok) {
@@ -166,18 +197,30 @@ export default function HostMeeting() {
                 setError('Failed to fetch user groups');
             }
         } catch (error) {
-            setError(error.message);
+            console.log("FETCH USER GP : ",error);
+            setError("FETCH USER GP : ",error.message);
         }
     };
 
     const fetchData = async () => {
-        const url = `http://localhost:8000/getGroups`;
+        try {
+            const url = `http://localhost:8000/getGroups`;
         const response = await fetch(url);
         if(response.ok){
             const data = await response.json();
             setAllGroupData(data.groups);
         }
+        } catch (error) {
+            alert("Get Groups : "+error);
+        }
+        
     };
+
+    const handleHostMeetingSubmit = async(e)=>{
+
+        e.preventDefault();
+
+    }
 
     // ==============================================================
 
@@ -185,16 +228,16 @@ export default function HostMeeting() {
 
         <div className='p-5 card m-3 '>
 
-            <form className="row g-3">
+            <form className="row g-3" onSubmit={handleHostMeetingSubmit}>
                 {/* TITLE */}
                 <div className="col-md-6">
                     <label htmlFor="title" className="form-label">Title</label>
-                    <input type="text" className="form-control" id="title" />
+                    <input type="text" onChange={(e)=>setFormData({...formData,'title':e.target.value})} value={formData.title} className="form-control" id="title" />
                 </div>
                 {/* AGENDA */}
                 <div className="col-md-6">
                     <label htmlFor="agenda" className="form-label">Agenda</label>
-                    <input type="text" className="form-control" id="agenda" />
+                    <input type="text" onChange={(e)=>setFormData({...formData,'agenda':e.target.value})} value={formData.agenda} className="form-control" id="agenda" />
                 </div>
                 {/* <div className="col-md-6">
 
@@ -203,7 +246,7 @@ export default function HostMeeting() {
                 {/* VENUE */}
                 <div className="col-md-6">
                     <label htmlFor="venue" className="form-label">Venue</label>
-                    <input type="text" className="form-control" id="venue" placeholder="Place" />
+                    <input type="text" onChange={(e)=>setFormData({...formData,'venue':e.target.value})} value={formData.venue} className="form-control" id="venue" placeholder="Place" />
                 </div>
                 {/* KEYWORD SEARCH */}
                 <div className="col-md-2">
@@ -213,13 +256,13 @@ export default function HostMeeting() {
                         <button id="dropdown" className=" btn btn-outline-secondary dropdown-toggle" onChange={(e) => setSelectedKeyword(e.target.value)} value={selectedKeyword} type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Choose
                         </button>
-                        <ul class="dropdown-menu">
+                        <ul className="dropdown-menu">
                             {
                                 keywordData.map((item) => (
 
                                     <li>
                                         <div>
-                                            <a class="dropdown-item" href="#">
+                                            <a className="dropdown-item" href="#">
                                                 <input className='form-check-input ' onChange={() => { selectedKeys.set(item.id, !selectedKeys.get(item.id)); console.log(selectedKeys) }} style={{ transform: "scale(1.5)" }} type="checkbox" name={item.id} id={item.id} />
                                                 <label className='form-check-label ml-2' htmlFor={item.id}><span className='pl-3'>&nbsp;&nbsp;{item.keyword}</span></label>
                                                 <hr className="dropdown-divider" />
@@ -252,8 +295,8 @@ export default function HostMeeting() {
                                     return (<>
                                     <li>
                                         <div>
-                                            <a class="dropdown-item" href="#">
-                                                <input className='form-check-input' onChange={() => { selectedKeys.set(item.id, !selectedKeys.get(item.groupID)); console.log(selectedKeys) }} style={{ transform: "scale(1.5)" }} type="checkbox" name={item.id} id={item.id} />
+                                            <a className="dropdown-item" href="#">
+                                                <input className='form-check-input' onChange={() => { selectedGroups.set(item.id, !selectedGroups.get(item.id)); console.log(selectedKeys) }} style={{ transform: "scale(1.5)" }} type="checkbox" name={item.id} id={item.id} />
                                                 <label className='form-check-label ml-2' htmlFor={item.groupID}><span className='pl-3'>&nbsp;&nbsp;{groupName}</span></label>
                                                 <hr className="dropdown-divider" />
                                             </a>

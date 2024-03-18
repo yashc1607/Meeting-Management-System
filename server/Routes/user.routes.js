@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDepartment, addGroup, addRole, addUser, assignGroup, assignKeyword, assignRole, getAllUser, getAssignedGroups, getAssignedKeywords, getAssignedRoles, getDepartments, getGroups, getRoles, getUser, getUserGroups, removeAssignedGroup, removeAssignedKeyword, removeAssignedRole, removeDepartment, removeGroup, removeRole, removeUser, updateAssignedRole, updateDepartment, updateGroup, updateRole } from '../Controller/userController.js';
+import { addDepartment, addGroup, addRole, addUser, assignGroup, assignKeyword, assignRole, getAllUser, getAllUserRole, getAssignedGroups, getAssignedKeywords, getAssignedRoles, getDepartments, getGroups, getRoles, getUser, getUserGroups, removeAssignedGroup, removeAssignedKeyword, removeAssignedRole, removeDepartment, removeGroup, removeRole, removeUser, updateAssignedRole, updateDepartment, updateGroup, updateRole } from '../Controller/userController.js';
 import { addMeeting, addMeetingKeywords, addParticipants } from '../Controller/meetingController.js';
 const userRouter = express.Router();
 //userRouter.use();
@@ -28,9 +28,10 @@ userRouter.post('/updategroups',updateGroup);
 userRouter.post('/removeAssignedGroup',removeAssignedGroup);
 
 userRouter.post('/assignRole',assignRole);  
-userRouter.get('/getassignedroles',getAssignedRoles);
+userRouter.post('/getassignedroles',getAssignedRoles);
 userRouter.post('/updateassignedrole',updateAssignedRole);
 userRouter.post('/removeassignedrole',removeAssignedRole);
+userRouter.get('/getAllUserRole',getAllUserRole);
 
 userRouter.post('/assigngroup',assignGroup);
 userRouter.post('/getassignedgroups',getAssignedGroups);
