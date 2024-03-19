@@ -70,7 +70,7 @@ export default function RemoveAssignedRole() {
             if (response.ok) {
                 console.log(response);
                 const data = await response.json();
-                setroleData(data.roles);
+                setroleData(data.roles);         
             } else {
                 setError('Failed to fetch user roles');
             }

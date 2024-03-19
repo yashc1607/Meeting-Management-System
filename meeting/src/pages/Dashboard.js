@@ -88,7 +88,25 @@ export default function Dashboard() {
     return (
 
         <div className='p-5 mt-3 r-50'>
-            <div className="card rounded-4" >
+            <ul className="nav nav-pills navbar navbar-expand-sm p-2 bg-light">
+        <li class="nav-item ">
+          <a class="nav-link active" aria-current="page" href="/Admin">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link "  href="/hostMeeting"role="button" >Host Meeting</a>
+         
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link "  href="/upcomingMeeting" role="button" >Upcoming Meetings</a>
+          
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link "  href="/pastMeeting" role="button" >Past Meetings</a>
+          
+        </li>
+        
+    </ul>
+            {/* <div className="card rounded-4" >
                 <div className="card-body">
                     <nav>
                         <div className="nav nav-tabs" id="nav-tab" role="tablist">
@@ -109,9 +127,9 @@ export default function Dashboard() {
 
                     </div>
 
-                    {/* <a href="#" class="btn btn-primary">Go somewhere</a> */}
+                   
                 </div>
-            </div>
+            </div> */}
 
 
 

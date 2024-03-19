@@ -4,6 +4,7 @@ import { addDepartment, addGroup, addRole, addUser, assignGroup, assignKeyword, 
 import { addAgenda, addMeeting, addMeetingKeywords, addParticipants, getUpcomingMeetings } from '../Controller/meetingController.js';
 import {getUserMeetings} from '../Controller/meetingController.js';
 import { getAllUserRole } from '../Controller/userController.js';
+import { rescheduleMeeting } from '../Controller/meetingController.js';
 const userRouter = express.Router();
 //userRouter.use();
 //public path
@@ -51,4 +52,5 @@ userRouter.post('/getuserassignedkeywords',getUserAssignedKeywords);
 userRouter.post('/getUpcomingMeetings',getUpcomingMeetings);
 userRouter.post('/addAgenda',addAgenda);
 userRouter.post('/getUserMeetings',getUserMeetings);
+userRouter.post('/rescheduleMeeting',rescheduleMeeting);
 export default userRouter; 

@@ -3,16 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminAction from '../components/AdminAction';
 import { UserAuth } from '../context/AuthContext';
+import Dashboard from './Dashboard';
 
 
 export default function HostMeeting() {
-    const [formData, setFormData] = useState({
+    const [formDataHM, setFormDataHM] = useState({
         title: '',
         agenda: '',
         venue: '', 
         date: ''
     });
-    const [selectedKeys,setSelectedKeys] = useState(new Set()); 
+    const [userIDHM, setUserIDHM] = useState(18); //userIDHM
+    const [idHM,setIDHM] = useState(null);
+    const [selectedKeysHM,setSelectedKeysHM] = useState(new Set()); 
 
     const { user } = UserAuth();
     console.log("UserAuth : ", user);
@@ -28,15 +31,15 @@ export default function HostMeeting() {
         // }
     }, [user]);
 
-    // const [currentUser,setCurrentUser] = useState(null);//
-    const [currentUser, setCurrUser] = useState(null);
+    // const [currentUserHM,setCurrentUser] = useState(null);//
+    const [currentUserHM, setCurrUserHM] = useState(null);
     const onLoadCall = async () => {
         await fetchUser();
         console.log("ON");
-        if (userID) {
+        if (userIDHM !== -1) {
 
             await fetchKeywordData();
-            await fetchUserGroups(userID);
+            await fetchUserGroups(userIDHM); 
         }
         else {
             console.log("BEFOREEEEEEEEEEEEE");
@@ -47,15 +50,14 @@ export default function HostMeeting() {
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(false);
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
+        setFormDataHM({
+            ...formDataHM,
             [e.target.id]: e.target.value,
         });
     };
     const [keywordData, setKeywordData] = useState([]);
     const [selectedRole, setSelectedRole] = useState(1); //change to 0 later
     const [selectedKeyword, setSelectedKeyword] = useState(0);
-    const [userID, setUserID] = useState(null); //userID
 
     const fetchKeywordData = async () => {   
         try { 
@@ -66,7 +68,7 @@ export default function HostMeeting() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    user_id:userID
+                    user_id:userIDHM
                 }),
             });
             if (response.ok) {
@@ -76,7 +78,7 @@ export default function HostMeeting() {
                 // keywordData.forEach(element => {
                 //     mp[element] = false;
                 // })
-                // setSelectedKeys({...mp});
+                // setSelectedKeysHM({...mp});
             }  
             console.log(keywordData);
         } catch (error) {  
@@ -89,7 +91,7 @@ export default function HostMeeting() {
     const [searchedUser, setSearchUser] = useState("");
     const fetchUser = async () => {
         try {
-            console.log(formData);
+            console.log(formDataHM);
             // setLoading(true);
             // setError(false);
             const url = `http://localhost:8000/getUser`;
@@ -105,12 +107,13 @@ export default function HostMeeting() {
             if (res.ok) {
                 const data = await res.json();
 
-                setCurrUser(prevState => data.user);
-                setUserID(data.user.id);
+                // setCurrUserHM(prevState => data.user);
+                setUserIDHM(data.user.id);
+                // setIDHM(data.user.id);
 
-                console.log(userID + " : CURRENT : ", data);
+                console.log(userIDHM + " : CURRENT : ", data);
                 console.log("CURRENT : ", data.user);
-                console.log("CURRENT : ", currentUser);
+                console.log("CURRENT : ", currentUserHM);
                 setLoading(false);
                 if (data.success === false) {
                     setError(data.message);
@@ -148,7 +151,7 @@ export default function HostMeeting() {
     const searchUser = async (e) => {
         e.preventDefault();
         try {
-            // console.log(formData);
+            // console.log(formDataHM);
             // setLoading(true);
             // setError(false);
             const url = `http://localhost:8000/getUser`;
@@ -172,8 +175,8 @@ export default function HostMeeting() {
                 setError(data.message);
             }
             }
-            
-        } catch (error) {
+             
+        } catch (error) {    
             setError(error.message);
             setLoading(false);
         }
@@ -183,7 +186,7 @@ export default function HostMeeting() {
     const [groupData, setGroupData] = useState([]);
     const [allGroupData, setAllGroupData] = useState([]);
     const [selectedGroups,setSelectedGroups] = useState(new Set()); 
-    const fetchUserGroups = async (userID) => {
+    const fetchUserGroups = async (userIDHM) => {
         try {
             const url = `http://localhost:8000/getUserGroups`;
             const response = await fetch(url, {
@@ -192,7 +195,7 @@ export default function HostMeeting() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    "user_id": userID
+                    "user_id": userIDHM
                 }),
             });
             if (response.ok) {
@@ -234,7 +237,7 @@ export default function HostMeeting() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    "user_id": userID
+                    "user_id": userIDHM
                 }),
             });
             if (response.ok) {
@@ -256,10 +259,10 @@ export default function HostMeeting() {
 
         e.preventDefault();
         let agendaID = -1;
-        if (formData.agenda !== "") {
-            agendaID = userID
+        if (formDataHM.agenda !== "") {
+            agendaID = userIDHM
         }
-        if (formData.date === "") {
+        if (formDataHM.date === "") {
             alert("Enter Date");
         }
         let savedMeeting = null;
@@ -272,18 +275,18 @@ export default function HostMeeting() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    "host_id": userID,
-                    "agenda": formData.agenda,
-                    "title": formData.title,
+                    "host_id": userIDHM,
+                    "agenda": formDataHM.agenda,
+                    "title": formDataHM.title,
                     "agenda_user_id": agendaID,
                     "meeting_data": "",
-                    "venue": formData.venue,
-                    "date": formData.date
+                    "venue": formDataHM.venue,
+                    "date": formDataHM.date
                 }),
             });
             if (response.ok) {
                 const data = await response.json();
-                setFormData({ venue: "", date: "", agenda: "", title: "" })
+                setFormDataHM({ venue: "", date: "", agenda: "", title: "" })
                 savedMeeting = data.meeting;
 
                 console.log("ADD MEETING", data);
@@ -302,6 +305,7 @@ export default function HostMeeting() {
          });        
         console.log("SELECTED GPS : ",selectedGroups);
         let userids = users.map((item)=>item.id);
+        userids = [...userids,userIDHM];
         try {
             const url = `http://localhost:8000/addparticipants`;
             const response = await fetch(url, {
@@ -317,7 +321,7 @@ export default function HostMeeting() {
             });
             if (response.ok) { 
                 const data = await response.json();
-                setFormData({ venue: "", date: "", agenda: "", title: "" })
+                setFormDataHM({ venue: "", date: "", agenda: "", title: "" })
                 
                 
                 console.log("ADD MEETING", data);
@@ -329,7 +333,7 @@ export default function HostMeeting() {
 
         }
         //keywords part
-        let reskeys = Array.from(selectedKeys);
+        let reskeys = Array.from(selectedKeysHM);
         reskeys = keywordData 
                     .filter((item)=>reskeys.includes(item.id))
                     .map((item)=>item.keyword)
@@ -347,12 +351,12 @@ export default function HostMeeting() {
             });
             if (response.ok) {
                 const data = await response.json();
-                // setFormData({ venue: "", date: "", agenda: "", title: "" })
+                // setFormDataHM({ venue: "", date: "", agenda: "", title: "" })
                 // const mp = {};
                 // keywordData.forEach(element => {
                 //     mp[element] = false;
                 // });
-                // setSelectedKeys({...mp});
+                // setSelectedKeysHMHM({...mp});
                 console.log("ADD MEETING", data);
             } else {
                 // setGroupData({});  
@@ -365,15 +369,15 @@ export default function HostMeeting() {
     }
     console.log("Before Toggle : ",selectedGroups); 
     const toggleItem = (itemId) => {
-        // console.log("TOGGLE : ",selectedKeys);
-        const newSelectedItems = new Set(selectedKeys);
-        if (selectedKeys.has(itemId)) {
+        // console.log("TOGGLE : ",selectedKeysHM);
+        const newSelectedItems = new Set(selectedKeysHM);
+        if (selectedKeysHM.has(itemId)) {
           newSelectedItems.delete(itemId); 
         } else {  
           newSelectedItems.add(itemId);
         }
-        setSelectedKeys(newSelectedItems);
-        console.log(selectedKeys);
+        setSelectedKeysHM(newSelectedItems);
+        console.log(selectedKeysHM);
       }; 
       const toggleItem2 = (itemId) => {
         const newSelected = new Set(selectedGroups);
@@ -385,19 +389,20 @@ export default function HostMeeting() {
         setSelectedGroups(newSelected);
       }; 
     return (     
- 
+        <>
+        <Dashboard/>
         <div className='p-5 card m-3 '>
 
             <form className="row g-3" onSubmit={handleHostMeetingSubmit}>
                 {/* TITLE */}
                 <div className="col-md-6">
                     <label htmlFor="title" className="form-label">Title</label>
-                    <input type="text" onChange={(e) => setFormData({ ...formData, 'title': e.target.value })} value={formData.title} className="form-control" id="title" />
+                    <input type="text" onChange={(e) => setFormDataHM({ ...formDataHM, 'title': e.target.value })} value={formDataHM.title} className="form-control" id="title" />
                 </div>
                 {/* AGENDA */}
                 <div className="col-md-6">
                     <label htmlFor="agenda" className="form-label">Agenda</label>
-                    <input type="text" onChange={(e) => setFormData({ ...formData, 'agenda': e.target.value })} value={formData.agenda} className="form-control" id="agenda" />
+                    <input type="text" onChange={(e) => setFormDataHM({ ...formDataHM, 'agenda': e.target.value })} value={formDataHM.agenda} className="form-control" id="agenda" />
                 </div>
                 {/* <div className="col-md-6">
 
@@ -406,7 +411,7 @@ export default function HostMeeting() {
                 {/* VENUE */}
                 <div className="col-md-6">
                     <label htmlFor="venue" className="form-label">Venue</label>
-                    <input type="text" onChange={(e) => setFormData({ ...formData, 'venue': e.target.value })} value={formData.venue} className="form-control" id="venue" placeholder="Place" />
+                    <input type="text" onChange={(e) => setFormDataHM({ ...formDataHM, 'venue': e.target.value })} value={formDataHM.venue} className="form-control" id="venue" placeholder="Place" />
                 </div>
                 {/* KEYWORD SEARCH */}
                 <div className="col-md-2">
@@ -419,11 +424,11 @@ export default function HostMeeting() {
                         <ul className="dropdown-menu">
                             { 
                                 keywordData.map((item) => (
-
+ 
                                     <li>
                                         <div>  
                                             <a className="dropdown-item" href="#">
-                                                <input className='form-check-input ' onChange={(e) => { toggleItem(item.id); console.log("ssssele KEYSS",selectedKeys) }} style={{ transform: "scale(1.5)" }} checked={selectedKeys.has(item.id) } type="checkbox" name={item.id} id={item.id} />
+                                                <input className='form-check-input ' onChange={(e) => { toggleItem(item.id); console.log("ssssele KEYSS",selectedKeysHM) }} style={{ transform: "scale(1.5)" }} checked={selectedKeysHM.has(item.id) } type="checkbox" name={item.id} id={item.id} />
                                                 <label className='form-check-label ml-2' htmlFor={item.id}><span className='pl-3'>&nbsp;&nbsp;{item.keyword}</span></label>  
                                                 <hr className="dropdown-divider" /> 
                                             </a>
@@ -474,7 +479,7 @@ export default function HostMeeting() {
                 {/* DATE/TIME */}
                 <div className='col-md-6'>
                     <label htmlFor="meetingtime" className='form-label'>Date/Time</label>
-                    <input className="form-control" onChange={(e) => setFormData({ ...formData, 'date': e.target.value })} value={formData.date} type="datetime-local" id="meetingtime" name="meetingtime" />
+                    <input className="form-control" onChange={(e) => setFormDataHM({ ...formDataHM, 'date': e.target.value })} value={formDataHM.date} type="datetime-local" id="meetingtime" name="meetingtime" />
                 </div>
                 {/* {JSON.stringify(Array.from(users))} */}
 
@@ -513,6 +518,6 @@ export default function HostMeeting() {
                 </div>
             </form>
 
-        </div>
+        </div></>
     )
 }

@@ -79,9 +79,15 @@ export const rescheduleMeeting = async (req, res, next) => {
                         }
                     }
                 );
+                const meeting = await Meeting.findOne({
+                    where: {
+                        id: data.meeting_id
+                    }
+                })
                 console.log('Successfully updated a meeting!');
                 res.status(200).send({
                     "message": "success",
+                    "meeting":meeting
                 });
             })
 
@@ -321,19 +327,28 @@ export const getUserMeetings = async (req, res, next) => {
                 const meetingId = await MeetingUser.findAll({
                     where: {
                         userID: data.user_id,
-                    },
-                    attributes: ['meetingId']
+                    }
                 })
 
                 // Extracting the meeting_id values from the array of objects
-                const ids = meetingId.map(meeting => meeting.dataValues.meetingId);
-                console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",meetingId[0].dataValues);
+                // console.log("MEETING ID : ",meetingId[0].meeting);
+                let ids = [];
+                meetingId.forEach((meeting)=>{
+                    ids.push(meeting.dataValues.meetingID)
+                });
+                console.log(ids);
+                console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",meetingId[0].dataValues.meetingID," : ",data.user_id);
                 // Querying the Meetings table for rows with matching meeting_id values
                 const meetings = await Meeting.findAll({
                     where: {
+                        date: {
+                            [Op.lt]: new Date() // Filter meetings whose date is less than the current date
+                        },
                         id: [...ids]
+                       
                     }
                 });
+                
                 console.log('Successfully found User-Roles!');
                 res.status(200).send({
                     "message": "success",
