@@ -16,7 +16,7 @@ const Navbar=()=>{
         <div className="container-fluid" >
             <a className="navbar-brand" style={{'fontWeight': 'bold','fontSize': '35px', color:'#007F73'}}>MEETING MANAGMENT SYSTEM</a>
             <form className="d-flex" role="search">
-            {user?.displayName?(<button className="btn btn-outline-success" type="submit" onClick={handleSignOut}>Logout</button>):(<Link className="btn btn-outline-success" type="submit" to='/'>Sign In</Link>)}
+            {user?.displayName?<> {user.displayName}&nbsp;&nbsp;  <button className="btn btn-outline-success" type="submit" onClick={handleSignOut}>Logout</button></>:(<Link className="btn btn-outline-success" type="submit" to='/'>Sign In</Link>)}
             </form>
         </div>
     </nav>

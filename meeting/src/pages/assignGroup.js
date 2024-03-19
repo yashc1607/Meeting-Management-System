@@ -92,13 +92,7 @@ export default function AssignGroup() {
                 const groupIDs = data.groups.map(group => group.groupID);
                 console.log(groupIDs);
                 const alreadyInGroup = groupIDs.includes(Number(selectedOption));
-                for (let i = 0; i < data.groups.length; i++) {
-                    if(data.groups[i].groupID === selectedOption){
-                        console.log("mil gaya");
-                    }
-                }
-                console.log(typeof selectedOption);
-                console.log(typeof data.groups[0].groupID);
+                console.log(alreadyInGroup);
                 if (alreadyInGroup) {
                     setError('User already part of group!');
                 } else {

@@ -17,6 +17,9 @@ import RemoveAssignedGroup from './pages/RemoveAssignedGroup';
 import Dashboard from './pages/Dashboard';
 import HostMeeting from './pages/HostMeeting';
 import RemoveAssignedRole from './pages/removeAssignedRole';
+import { Children } from 'react';
+import UpcomingMeeting from './pages/UpcomingMeetings';
+import PastMeeting from './pages/PastMeeting';
 
 export default function App() {
   return (
@@ -35,6 +38,11 @@ export default function App() {
           <Route path="/AssignGroup" element={<Protected ><AssignGroup /></Protected>} />
           <Route path="/RemoveAssignedGroup" element={<Protected ><RemoveAssignedGroup /></Protected>} />
           <Route path="/Dashboard" element={<Protected ><Dashboard /></Protected>} />
+          <Route path="/hostMeeting" element={<Protected ><HostMeeting /></Protected>} />
+          <Route path="/upcomingMeeting" element={<Protected ><UpcomingMeeting /></Protected>} />
+          <Route path="/pastMeeting" element={<Protected ><PastMeeting /></Protected>} />
+              
+          
           <Route path="/account" element={<Protected ><Account /></Protected>}/>       
           <Route path="/RemoveAssignedRole" element={<Protected ><RemoveAssignedRole /></Protected>}/>       
         </Routes>
