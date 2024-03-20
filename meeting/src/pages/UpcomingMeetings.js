@@ -8,7 +8,7 @@ import Dashboard from './Dashboard';
 
 export default function UpcomingMeeting() {
 
-    const [userIDUM, setUserID] = useState(18); //userIDUM
+    const [userIDUM, setUserID] = useState(null); //userIDUM
     const { user } = UserAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
@@ -31,7 +31,10 @@ export default function UpcomingMeeting() {
             console.log(alert("else"));
         }
         // }
-    }, [user,reload]);
+    }, [user]);
+    useEffect(()=>{
+        fetchUpcomingMeetings();
+    },[userIDUM,reload])
 
     const onLoadCall = async () => {
         await fetchUser();
@@ -72,7 +75,7 @@ export default function UpcomingMeeting() {
                 console.log("CURRENT : ", currentUser);
                 setLoading(false);
 
-                await fetchUpcomingMeetings();
+                // await fetchUpcomingMeetings();
 
                 if (data.success === false) {
                     setError(data.message);
@@ -185,6 +188,7 @@ export default function UpcomingMeeting() {
             });
             if (response.ok) {
                 const data = await response.json();console.log("UPCOMING MEETINGS : ", upcomingMeetings);
+                setFormDataUM({"date":"",venue:""});
                 setReload(!reload);
             }
 
@@ -197,7 +201,7 @@ export default function UpcomingMeeting() {
 
     return (
         <> 
-            <Dashboard/>
+            {/* <Dashboard/> */}
             <div className='p-5 card m-3 border-2 rounded-2 scrollable '>
                 <div className="accordion overflow-auto" id="accordionExample">
                     {upcomingMeetings.map((argMeeting) => (

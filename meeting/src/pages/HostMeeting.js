@@ -13,7 +13,7 @@ export default function HostMeeting() {
         venue: '', 
         date: ''
     });
-    const [userIDHM, setUserIDHM] = useState(18); //userIDHM
+    const [userIDHM, setUserIDHM] = useState(null); //userIDHM
     const [idHM,setIDHM] = useState(null);
     const [selectedKeysHM,setSelectedKeysHM] = useState(new Set()); 
 
@@ -30,14 +30,18 @@ export default function HostMeeting() {
         }
         // }
     }, [user]);
+    useEffect(()=>{
+        fetchKeywordData();
+        fetchUserGroups(userIDHM)
+    },[userIDHM]);
 
     // const [currentUserHM,setCurrentUser] = useState(null);//
     const [currentUserHM, setCurrUserHM] = useState(null);
     const onLoadCall = async () => {
         await fetchUser();
         console.log("ON");
-        if (userIDHM !== -1) {
-
+        if (userIDHM) {
+            console.log("hiiiiiiiiiiii",userIDHM)
             await fetchKeywordData();
             await fetchUserGroups(userIDHM); 
         }
@@ -112,7 +116,7 @@ export default function HostMeeting() {
                 // setIDHM(data.user.id);
 
                 console.log(userIDHM + " : CURRENT : ", data);
-                console.log("CURRENT : ", data.user);
+                console.log("CURRENT : ", data.user); 
                 console.log("CURRENT : ", currentUserHM);
                 setLoading(false);
                 if (data.success === false) {
@@ -390,7 +394,7 @@ export default function HostMeeting() {
       }; 
     return (     
         <>
-        <Dashboard/>
+        {/* <Dashboard/> */}
         <div className='p-5 card m-3 '>
 
             <form className="row g-3" onSubmit={handleHostMeetingSubmit}>
